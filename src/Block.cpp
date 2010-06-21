@@ -10,9 +10,6 @@ Block::Block(uint block){
 	block_num= block;
 }
 
-Block::~Block(void){
-}
-
 void Block::read(uint page_num){
 	if (page_data.find(page_num) == page_data.end()){
 		cerr<<"Invalid read\n";
