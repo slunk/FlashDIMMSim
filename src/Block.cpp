@@ -11,24 +11,21 @@ Block::Block(uint block){
 }
 
 Block::~Block(void){
-	pages.~map();
 }
 
 void Block::read(uint page_num){
-	if (pages.find(page_num) == pages.end()){
+	if (page_data.find(page_num) == page_data.end()){
 		cerr<<"Invalid read\n";
 		exit(1);
 	} else{
 		//READ
+		cout<<page_data[page_num]<<endl;
 	}
 }
 
 void Block::write(uint page_num, void *data){
-	if (pages.find(page_num) == pages.end()){
-		Page new_page;
-		new_page.page_num= page_num;
-		new_page.data= data;
-		pages[page_num]= new_page;
+	if (page_data.find(page_num) == page_data.end()){
+		page_data[page_num]= data;
 	} else{
 		cerr<<"Invalid write\n";
 		exit(1);
@@ -36,6 +33,6 @@ void Block::write(uint page_num, void *data){
 }
 
 void Block::erase(){
-	pages.clear();
+	page_data.clear();
 }
 

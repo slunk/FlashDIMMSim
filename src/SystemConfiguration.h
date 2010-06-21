@@ -5,5 +5,6 @@
 #include <vector>
 #include <map>
 #include <cstdlib>
+#include <stdint.h>
 
 #endif

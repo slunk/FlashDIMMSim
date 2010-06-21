@@ -7,11 +7,6 @@
 #include "SystemConfiguration.h"
 
 namespace SSDSim{
-	typedef struct page{
-		uint page_num;
-		void *data;
-	} Page;
-
 	class Block{
 		public:
 			Block(uint block_num);
@@ -21,7 +16,7 @@ namespace SSDSim{
 			void erase(void);
 		private:
 			uint block_num;
-			std::map<uint, Page> pages;
+			std::map<uint, void *> page_data;
 	};
 }
 #endif
