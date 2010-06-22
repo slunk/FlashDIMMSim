@@ -33,8 +33,8 @@ namespace SSDSim
 		BusPacket(BusPacketType packtype, uint64_t physicalAddr, uint page, uint block, uint plane, uint die, void *dat);
 		BusPacket();
 
-		void print();
-		void print(uint64_t currentClockCycle, bool dataStart);
+		//void print();
+		void print(uint64_t currentClockCycle);
 		static void printData(const void *data);
 	};
 }

@@ -10,13 +10,16 @@ Block::Block(uint block){
 	block_num= block;
 }
 
-void Block::read(uint page_num){
+Block::Block(){}
+
+void *Block::read(uint page_num){
 	if (page_data.find(page_num) == page_data.end()){
 		cerr<<"Invalid read\n";
 		exit(1);
 	} else{
 		//READ
-		cout<<page_data[page_num]<<endl;
+		//cout<<page_data[page_num]<<endl;
+		return page_data[page_num];
 	}
 }
 

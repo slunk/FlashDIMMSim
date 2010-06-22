@@ -10,7 +10,8 @@ namespace SSDSim{
 	class Block{
 		public:
 			Block(uint block_num);
-			void read(uint page_num);
+			Block();
+			void *read(uint page_num);
 			void write(uint page_num, void *data);
 			void erase(void);
 		private:
