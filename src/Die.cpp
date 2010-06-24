@@ -48,7 +48,10 @@ void Die::update(void){
 				default:
 					break;
 			}
+			/*Debug output
 			cout<<"Some command happened at cycle: "<<currentClockCycle<<endl;
+			if (!returnDataPackets.empty())
+				cout<<returnDataPackets.front()->data<<endl;*/
 			currentCommand= NULL;
 		} 
 		controlCyclesLeft--;
@@ -69,7 +72,6 @@ void Die::update(void){
 				default:
 					break;
 			}
-			cout<<"Read time: "<<READ_TIME<<" ctrl: "<<controlCyclesLeft<<endl;
 		}
 	}
 
