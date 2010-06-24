@@ -12,13 +12,13 @@ namespace SSDSim{
 	class Plane{
 		public:
 			Plane(void);
-			void read(BusPacket busPacket);
-			void write(BusPacket busPacket);
-			void erase(BusPacket busPacket);
-			void storeInData(BusPacket busPacket); 
-			BusPacket readFromData(void);
+			void read(BusPacket *busPacket);
+			void write(BusPacket *busPacket);
+			void erase(BusPacket *busPacket);
+			void storeInData(BusPacket *busPacket); 
+			BusPacket *readFromData(void);
 		private:
-			BusPacket dataReg, cacheReg;
+			BusPacket *dataReg, *cacheReg;
 			std::map<uint, Block> blocks;
 	};
 }

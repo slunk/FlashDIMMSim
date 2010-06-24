@@ -7,14 +7,12 @@
 using namespace SSDSim;
 using namespace std;
 
-Die::Die(int num_planes){
-	int x;
-	for (x= 0; x < num_planes; x++){
-		planes.push_back(new Plane());
-	}
+Die::Die(void){
+	planes= vector<Plane>(NUM_PLANES, Plane());
 
 	dataCyclesLeft= 0;
 	controlCyclesLeft= 0;
+
 }
 
 void Die::attachToChannel(Channel *chan){
@@ -23,7 +21,7 @@ void Die::attachToChannel(Channel *chan){
 
 void Die::receiveFromChannel(BusPacket *busPacket){
 	if (busPacket->busPacketType == DATA){
-		planes[busPacket->plane]->storeInData(*busPacket);
+		planes[busPacket->plane].storeInData(busPacket);
 	} else{
 		commands.push(busPacket);
 	}
@@ -34,21 +32,23 @@ void Die::update(void){
 		if (controlCyclesLeft == 0){
 			switch (currentCommand->busPacketType){
 				case READ:
-					planes[currentCommand->plane]->read(*currentCommand);
-					//plane needs changes
-					//returnDataPackets.push(planes[currentCommand->plane]->readFromData());
+					planes[currentCommand->plane].read(currentCommand);
+					returnDataPackets.push(planes[currentCommand->plane].readFromData());
 					break;
 				case WRITE:
-					planes[currentCommand->plane]->write(*currentCommand);
+					planes[currentCommand->plane].write(currentCommand);
 					break;
 				case ERASE:
-					planes[currentCommand->plane]->erase(*currentCommand);
+					planes[currentCommand->plane].erase(currentCommand);
 					break;
 				default:
 					break;
 			}
 			currentCommand= NULL;
-			//look at next command
+		} 
+		controlCyclesLeft--;
+	} else{
+		if (!commands.empty()){
 			if (!commands.empty()){
 				currentCommand= commands.front();
 				commands.pop();
@@ -65,18 +65,19 @@ void Die::update(void){
 					default:
 						break;
 				}
-			}	
-		} else
-			controlCyclesLeft--;
+			}
+		}
 	}
 
+	//using channel without contention for now
 	if (!returnDataPackets.empty()){
 		//return the data
 		if (dataCyclesLeft == 0){
 			channel->sendToController(returnDataPackets.front());
 			returnDataPackets.pop();
 			if (!returnDataPackets.empty())
-				dataCyclesLeft= DATA_TIME;
+				if (channel->obtainChannel(0));
+					dataCyclesLeft= DATA_TIME;
 		}
 		dataCyclesLeft--;
 	}
