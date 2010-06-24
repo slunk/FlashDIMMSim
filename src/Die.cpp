@@ -10,8 +10,12 @@ using namespace std;
 Die::Die(void){
 	planes= vector<Plane>(NUM_PLANES, Plane());
 
+	currentCommand= NULL;
+
 	dataCyclesLeft= 0;
 	controlCyclesLeft= 0;
+
+	currentClockCycle= 0;
 
 }
 
@@ -44,28 +48,28 @@ void Die::update(void){
 				default:
 					break;
 			}
+			cout<<"Some command happened at cycle: "<<currentClockCycle<<endl;
 			currentCommand= NULL;
 		} 
 		controlCyclesLeft--;
 	} else{
 		if (!commands.empty()){
-			if (!commands.empty()){
-				currentCommand= commands.front();
-				commands.pop();
-				switch (currentCommand->busPacketType){
-					case READ:
-						controlCyclesLeft= READ_TIME;
-						break;
-					case WRITE:
-						controlCyclesLeft= WRITE_TIME;
-						break;
-					case ERASE:
-						controlCyclesLeft= ERASE_TIME;
-						break;
-					default:
-						break;
-				}
+			currentCommand= commands.front();
+			commands.pop();
+			switch (currentCommand->busPacketType){
+				case READ:
+					controlCyclesLeft= READ_TIME;
+					break;
+				case WRITE:
+					controlCyclesLeft= WRITE_TIME;
+					break;
+				case ERASE:
+					controlCyclesLeft= ERASE_TIME;
+					break;
+				default:
+					break;
 			}
+			cout<<"Read time: "<<READ_TIME<<" ctrl: "<<controlCyclesLeft<<endl;
 		}
 	}
 
