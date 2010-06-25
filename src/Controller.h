@@ -35,7 +35,7 @@ namespace SSDSim{
 
 			//Ftl ftl;
 			std::vector<Package> *packages;
-			std::vector<std::queue <BusPacket *> > packetQueues;
+			std::vector<std::queue <BusPacket *> > channelQueues;
 			std::vector<BusPacket *> outgoingPackets;
 			
 			std::vector<uint> channelXferCyclesLeft;

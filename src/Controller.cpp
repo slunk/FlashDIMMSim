@@ -13,7 +13,7 @@ Controller::Controller(Ssd* parent){
 
 	channelXferCyclesLeft= vector<uint>(NUM_PACKAGES, 0);
 
-	packetQueues= vector<queue <BusPacket *> >(NUM_PACKAGES, queue<BusPacket *>());
+	channelQueues= vector<queue <BusPacket *> >(NUM_PACKAGES, queue<BusPacket *>());
 	outgoingPackets= vector<BusPacket *>(NUM_PACKAGES, NULL);
 
 	currentClockCycle= 0;
@@ -41,11 +41,12 @@ void Controller::receiveFromChannel(BusPacket *busPacket){
 }
 
 void Controller::update(void){
-	//ffs this is gonna suck
 	int i;
 	
+	//Check for commands/data on a channel. If there is, see if it is done on channel
 	for (i= 0; i < outgoingPackets.size(); i++){
 		if (!(outgoingPackets[i] != NULL)){
+
 			channelXferCyclesLeft[i]--;
 			if (channelXferCyclesLeft[i] == 0){
 				(*packages)[outgoingPackets[i]->package].dies[outgoingPackets[i]->die].receiveFromChannel(outgoingPackets[i]);
@@ -56,10 +57,11 @@ void Controller::update(void){
 	}
 	
 	//Look through queues and send oldest packets to the appropriate channel
-	for (i= 0; i < packetQueues.size(); i++){
-		if (!packetQueues[i].empty() && outgoingPackets[i]==NULL){
-			outgoingPackets[i]= packetQueues[i].front();
-			packetQueues[i].pop();
+	for (i= 0; i < channelQueues.size(); i++){
+		if (!channelQueues[i].empty() && outgoingPackets[i]==NULL){
+			//if we can get the channel (channel contention not implemented yet)
+			outgoingPackets[i]= channelQueues[i].front();
+			channelQueues[i].pop();
 			switch (outgoingPackets[i]->busPacketType){
 				case DATA:
 					channelXferCyclesLeft[i]= DATA_TIME;
@@ -69,5 +71,27 @@ void Controller::update(void){
 					break;
 			}
 		}
+	}
+	
+	//Look for new transactions. If there are any, translate their address, make buspackets, and place in appropriate channel queue
+	//This will ABSOLUTELY have to change on future iterations of SSDSim 
+	while (transactionQueue.size() > 0){//This is probably a terrible way to do this
+		switch (transactionQueue.front().transactionType){
+			case DATA_READ:
+				BusPacket *readPacket= ftl.translate(READ, transactionQueue.front());
+				channelPackets[readPacket->package].push(readPacket);
+				break;
+			case DATA_WRITE:
+				BusPacket *dataPacket= ftl.translate(DATA, transactionQueue.front());
+				BusPacket *writePacket= new BusPacket(WRITE, dataPacket->physicalAddress, dataPacket->page, dataPacket->block, dataPacket->plane, dataPacket->die, dataPacket->package, dataPacket->data); 
+				channelPackets[writePacket->package].push_back(dataPacket);
+				channelPackets[writePacket->package].push_back(writePacket);
+				break;
+			default:
+				ERROR("Invalid transaction type from hybrid controller: "<<transactionQueue.front().transactionType);
+				exit(1);
+				break;
+		}
+		transactionQueue.pop();
 	}
 }
