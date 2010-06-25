@@ -33,7 +33,7 @@ namespace SSDSim{
 			std::queue<Transaction> transactionQueue;
 			std::vector<Transaction> returnTransaction;
 
-			//Ftl ftl;
+			Ftl ftl;
 			std::vector<Package> *packages;
 			std::vector<std::queue <BusPacket *> > channelQueues;
 			std::vector<BusPacket *> outgoingPackets;

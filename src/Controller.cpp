@@ -77,15 +77,17 @@ void Controller::update(void){
 	//This will ABSOLUTELY have to change on future iterations of SSDSim 
 	while (transactionQueue.size() > 0){//This is probably a terrible way to do this
 		switch (transactionQueue.front().transactionType){
-			case DATA_READ:
+			case DATA_READ:{
 				BusPacket *readPacket= ftl.translate(READ, transactionQueue.front());
-				channelPackets[readPacket->package].push(readPacket);
+				channelQueues[readPacket->package].push(readPacket);
+				}
 				break;
-			case DATA_WRITE:
+			case DATA_WRITE:{
 				BusPacket *dataPacket= ftl.translate(DATA, transactionQueue.front());
 				BusPacket *writePacket= new BusPacket(WRITE, dataPacket->physicalAddress, dataPacket->page, dataPacket->block, dataPacket->plane, dataPacket->die, dataPacket->package, dataPacket->data); 
-				channelPackets[writePacket->package].push_back(dataPacket);
-				channelPackets[writePacket->package].push_back(writePacket);
+				channelQueues[writePacket->package].push(dataPacket);
+				channelQueues[writePacket->package].push(writePacket);
+				}
 				break;
 			default:
 				ERROR("Invalid transaction type from hybrid controller: "<<transactionQueue.front().transactionType);
