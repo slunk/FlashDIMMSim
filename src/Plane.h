@@ -1,8 +1,7 @@
-//Plane.h
-//header file for the Plane class
-
 #ifndef PLANE_H
 #define PLANE_H
+//Plane.h
+//header file for the Plane class
 
 #include "SystemConfiguration.h"
 #include "Block.h"

@@ -1,8 +1,7 @@
-//Block.h
-//header file for the Block class
-
 #ifndef BLOCK_H
 #define BLOCK_H
+//Block.h
+//header file for the Block class
 
 #include "SystemConfiguration.h"
 

@@ -1,6 +1,8 @@
 #ifndef SYSCONFIG_H
 #define SYSCONFIG_H
-
+//SysemConfiguration.h
+//Configuration values, headers, and macros for the whole system
+//
 #include <iostream>
 #include <cstdlib>
 
@@ -9,6 +11,16 @@
 #include <queue>
 
 #include <stdint.h>
+
+#define ERROR(str) std::cerr<<"[ERROR ("<<__FILE__<<":"<<__LINE__<<")]: "<<str<<std::endl;
+
+#ifdef DEBUG_BUILD
+	#define DEBUG(str) std::cout<< str <<std::endl;
+	#define DEBUGN(str) std::cout<< str;
+#else
+	#define DEBUG(str) ;
+	#define DEBUGN(str) ;
+#endif
 
 extern uint NUM_PACKAGES;
 extern uint NUM_DIES;

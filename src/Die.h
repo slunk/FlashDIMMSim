@@ -1,8 +1,7 @@
-//Die.h
-//header file for the Die class
-
 #ifndef DIE_H
 #define DIE_H
+//Die.h
+//header file for the Die class
 
 #include "SimulatorObject.h"
 #include "SystemConfiguration.h"

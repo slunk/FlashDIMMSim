@@ -1,8 +1,7 @@
-//Channel.h
-//header file for the Package class
-
 #ifndef CHANNEL_H
 #define CHANNEL_H
+//Channel.h
+//header file for the Package class
 
 #include "SystemConfiguration.h"
 #include "Die.h"
