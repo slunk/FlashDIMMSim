@@ -22,6 +22,7 @@ namespace SSDSim{
 			Controller(Ssd* parent);
 
 			bool addTransaction(Transaction &trans);
+			void attachPackages(vector<Package> *packages);
 			void returnReadData(const Transaction &trans);
 			void attachChannel(Channel *channel);
 			void receiveFromChannel(BusPacket *busPacket);
@@ -30,10 +31,12 @@ namespace SSDSim{
 
 			Ssd *parentSsd;
 			std::queue<Transaction> transactionQueue;
+			std::vector<Transaction> returnTransaction;
 
 			//Ftl ftl;
-			std::vector<Package> packages;
-			std::vector<std::queue <BusPacket *> > outgoingPackets;
+			std::vector<Package> *packages;
+			std::vector<std::queue <BusPacket *> > packetQueues;
+			std::vector<BusPacket *> outgoingPackets;
 			
 			std::vector<uint> channelXferCyclesLeft;
 

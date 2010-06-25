@@ -5,6 +5,7 @@
 //
 #include <iostream>
 #include <cstdlib>
+#include <string>
 
 #include <vector>
 #include <map>
@@ -32,5 +33,9 @@ extern uint READ_TIME;
 extern uint WRITE_TIME;
 extern uint ERASE_TIME;
 extern uint DATA_TIME;
+extern uint COMMAND_TIME;
 
+namespace SSDSim{
+	typedef void (*returnCallBack_t)(uint id, uint64_t addr, uint64_t clockcycle);
+}
 #endif

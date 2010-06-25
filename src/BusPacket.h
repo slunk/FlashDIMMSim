@@ -26,11 +26,12 @@ namespace SSDSim
 		uint block;
 		uint plane;
 		uint die;
+		uint package;
 		uint64_t physicalAddress;
 		void *data;
 
 		//Functions
-		BusPacket(BusPacketType packtype, uint64_t physicalAddr, uint page, uint block, uint plane, uint die, void *dat);
+		BusPacket(BusPacketType packtype, uint64_t physicalAddr, uint page, uint block, uint plane, uint die, uint package, void *dat);
 		BusPacket();
 
 		//void print();
