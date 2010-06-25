@@ -34,5 +34,5 @@ void Channel::sendToDie(uint die_num, BusPacket *busPacket){
 }
 
 void Channel::sendToController(BusPacket *busPacket){
-	//controller->receiveFromChannel(busPacket);
+	controller->receiveFromChannel(busPacket);
 }

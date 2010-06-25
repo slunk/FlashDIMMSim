@@ -17,10 +17,10 @@ namespace SSDSim{
 			Ssd(uint id, string dev, string sys, string pwd, string trc);
 			void update(void);
 			bool add(Transaction &trans);
-			bool addTransaction(bool isWrite, uint64_t);
-			void printStats();
+			bool addTransaction(bool isWrite, uint64_t addr);
+			void printStats(void);
 			string SetOutputFileName(string tracefilename);
-			void RegisterCallbacks(Callback_t *readDone, Callback_t *writedone);
+			void RegisterCallbacks(Callback_t *readDone, Callback_t *writeDone);
 
 			Controller *controller;
 			vector<Package> *packages;

@@ -72,9 +72,9 @@ void Controller::update(void){
 			}
 		}
 	}
-	
+
 	//Look for new transactions. If there are any, translate their address, make buspackets, and place in appropriate channel queue
-	//This will ABSOLUTELY have to change on future iterations of SSDSim 
+	//Everything past his point will probably need some drasic changes in future iterations
 	while (transactionQueue.size() > 0){//This is probably a terrible way to do this
 		switch (transactionQueue.front().transactionType){
 			case DATA_READ:{
@@ -95,5 +95,11 @@ void Controller::update(void){
 				break;
 		}
 		transactionQueue.pop();
+	}
+	
+	//See if any read data is ready to return
+	while (!returnTransaction.empty()){
+		returnReadData(returnTransaction.front());
+		returnTransaction.pop();
 	}
 }
