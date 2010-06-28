@@ -27,9 +27,9 @@ namespace SSDSim{
 			void attachChannel(Channel *channel);
 			void receiveFromChannel(BusPacket *busPacket);
 			void update(void);
+			Ssd *parentSsd;
 		private:
 
-			Ssd *parentSsd;
 			std::queue<Transaction> transactionQueue;
 			std::vector<Transaction> returnTransaction;
 

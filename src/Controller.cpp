@@ -45,10 +45,15 @@ void Controller::update(void){
 	
 	//Check for commands/data on a channel. If there is, see if it is done on channel
 	for (i= 0; i < outgoingPackets.size(); i++){
-		if (!(outgoingPackets[i] != NULL)){
+		if (currentClockCycle == 0 || currentClockCycle == 1)
+		//cout<<outgoingPackets[i]<<endl;
+		if (outgoingPackets[i] != NULL){
+			//cout<<i<<" anything ever getting here? "<<channelXferCyclesLeft[i]<<endl;
 
 			channelXferCyclesLeft[i]--;
+			//cout<<channelXferCyclesLeft[i]<<endl;;
 			if (channelXferCyclesLeft[i] == 0){
+				cout<<"yup"<<endl;
 				(*packages)[outgoingPackets[i]->package].dies[outgoingPackets[i]->die].receiveFromChannel(outgoingPackets[i]);
 				//packages[outgoingPackets[i]->package].channel->releaseChannel();
 				outgoingPackets[i]= NULL;
@@ -62,12 +67,14 @@ void Controller::update(void){
 			//if we can get the channel (channel contention not implemented yet)
 			outgoingPackets[i]= channelQueues[i].front();
 			channelQueues[i].pop();
+			//cout<<currentClockCycle<<" "<<outgoingPackets[0]->busPacketType<<" "<<DATA<<" "<<DATA_TIME<<endl;
 			switch (outgoingPackets[i]->busPacketType){
 				case DATA:
 					channelXferCyclesLeft[i]= DATA_TIME;
 					break;
 				default:
 					channelXferCyclesLeft[i]= COMMAND_TIME;
+					cout<<i<<" "<<channelXferCyclesLeft[i];
 					break;
 			}
 		}
@@ -82,7 +89,8 @@ void Controller::update(void){
 				channelQueues[readPacket->package].push(readPacket);
 				}
 				break;
-			case DATA_WRITE:{
+			case DATA_WRITE:
+				{
 				BusPacket *dataPacket= ftl.translate(DATA, transactionQueue.front());
 				BusPacket *writePacket= new BusPacket(WRITE, dataPacket->physicalAddress, dataPacket->page, dataPacket->block, dataPacket->plane, dataPacket->die, dataPacket->package, dataPacket->data); 
 				channelQueues[writePacket->package].push(dataPacket);
@@ -99,7 +107,7 @@ void Controller::update(void){
 	
 	//See if any read data is ready to return
 	while (!returnTransaction.empty()){
-		returnReadData(returnTransaction.front());
-		returnTransaction.pop();
+		returnReadData(returnTransaction.back());
+		returnTransaction.pop_back();
 	}
 }

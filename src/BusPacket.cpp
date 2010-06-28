@@ -6,7 +6,7 @@
 using namespace SSDSim;
 using namespace std;
 
-BusPacket::BusPacket(BusPacketType packtype, uint64_t physicalAddr, uint page_num, uint block_num, uint plane_num, uint die_num, void *dat)
+BusPacket::BusPacket(BusPacketType packtype, uint64_t physicalAddr, uint page_num, uint block_num, uint plane_num, uint die_num, uint package_num, void *dat)
 {
 	physicalAddress = physicalAddr;
 	busPacketType = packtype;
@@ -15,6 +15,7 @@ BusPacket::BusPacket(BusPacketType packtype, uint64_t physicalAddr, uint page_nu
 	block = block_num;
 	plane = plane_num;
 	die = die_num;
+	package = package_num;
 }
 
 BusPacket::BusPacket() {}

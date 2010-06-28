@@ -24,11 +24,11 @@ namespace SSDSim{
 			int hasChannel(uint sender);
 			void sendToDie(uint die_num, BusPacket *busPacket);
 			void sendToController(BusPacket *busPacket);
+			Controller *controller;
 		private:
 			ChannelStatus status;
 			uint sender;
 			std::vector<Die *> dies;
-			Controller *controller;
 	};
 }
 #endif

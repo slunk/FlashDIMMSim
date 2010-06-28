@@ -11,6 +11,8 @@
 namespace SSDSim{
 
 	class Channel;
+	class Controller;
+	class Ssd;
 	class Die : public SimulatorObject{
 		public:
 			Die(void);

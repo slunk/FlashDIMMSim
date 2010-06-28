@@ -23,11 +23,31 @@
 	#define DEBUGN(str) ;
 #endif
 
+/*#ifndef NO_OUTPUT
+	#define PRINT(str)  if(SHOW_SIM_OUTPUT) { std::cerr <<str<<std::endl; }
+	#define PRINTN(str) if(SHOW_SIM_OUTPUT) { std::cerr <<str; }
+#else
+	#undef DEBUG
+	#undef DEBUGN
+	#define DEBUG(str) ;
+	#define DEBUGN(str) ;
+	#define PRINT(str) ;
+	#define PRINTN(str) ;
+#endif*/
+#define PRINT(str) ;
+
 extern uint NUM_PACKAGES;
 extern uint NUM_DIES;
 extern uint NUM_PLANES;
 extern uint NUM_BLOCKS;
 extern uint NUM_PAGES;
+extern uint PAGE_SIZE;
+
+#define BLOCK_SIZE (PAGE_SIZE*NUM_PAGES)
+#define PLANE_SIZE (PAGE_SIZE*NUM_PAGES*NUM_BLOCKS)
+#define DIE_SIZE (PAGE_SIZE*NUM_PAGES*NUM_BLOCKS*NUM_PLANES)
+#define PACKAGE_SIZE (PAGE_SIZE*NUM_PAGES*NUM_BLOCKS*NUM_PLANES*NUM_DIES)
+#define TOTAL_SIZE (PAGE_SIZE*NUM_PAGES*NUM_BLOCKS*NUM_PLANES*NUM_DIES*NUM_PACKAGES)
 
 extern uint READ_TIME;
 extern uint WRITE_TIME;

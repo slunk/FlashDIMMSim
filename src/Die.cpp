@@ -3,6 +3,8 @@
 
 #include "Die.h"
 #include "Channel.h"
+#include "Controller.h"
+#include "Ssd.h"
 
 using namespace SSDSim;
 using namespace std;
@@ -41,6 +43,10 @@ void Die::update(void){
 					break;
 				case WRITE:
 					planes[currentCommand->plane].write(currentCommand);
+					//the following two lines are terrible. TODO: edit classes so that this isn't so damn messy
+					if ((channel->controller->parentSsd->WriteDataDone) != NULL){
+						(*channel->controller->parentSsd->WriteDataDone)(channel->controller->parentSsd->systemID, currentCommand->physicalAddress, currentClockCycle);
+					}
 					break;
 				case ERASE:
 					planes[currentCommand->plane].erase(currentCommand);
@@ -48,11 +54,12 @@ void Die::update(void){
 				default:
 					break;
 			}
-			/*Debug output
-			cout<<"Some command happened at cycle: "<<currentClockCycle<<endl;
+			
+			 //Debug output
+			/*cout<<"Some command happened at cycle: "<<currentClockCycle<<endl;
 			if (!returnDataPackets.empty())
-				cout<<returnDataPackets.front()->data<<endl;*/
-			currentCommand= NULL;
+				cout<<returnDataPackets.front()->data<<endl;
+			*/currentCommand= NULL;
 		} 
 		controlCyclesLeft--;
 	} else{
