@@ -22,10 +22,11 @@ Die::Die(void){
 }
 
 void Die::attachToChannel(Channel *chan){
-	this->channel= channel;
+	channel= chan;
 }
 
 void Die::receiveFromChannel(BusPacket *busPacket){
+	busPacket->print(currentClockCycle);
 	if (busPacket->busPacketType == DATA){
 		planes[busPacket->plane].storeInData(busPacket);
 	} else{
@@ -40,26 +41,27 @@ void Die::update(void){
 				case READ:
 					planes[currentCommand->plane].read(currentCommand);
 					returnDataPackets.push(planes[currentCommand->plane].readFromData());
+					PRINT("READ");
 					break;
 				case WRITE:
 					planes[currentCommand->plane].write(currentCommand);
 					//the following two lines are terrible. TODO: edit classes so that this isn't so damn messy
-					if ((channel->controller->parentSsd->WriteDataDone) != NULL){
+					if (channel->controller->parentSsd->WriteDataDone != NULL){
 						(*channel->controller->parentSsd->WriteDataDone)(channel->controller->parentSsd->systemID, currentCommand->physicalAddress, currentClockCycle);
 					}
+					PRINT("WRITE");
 					break;
 				case ERASE:
 					planes[currentCommand->plane].erase(currentCommand);
+					PRINT("ERASE");
 					break;
 				default:
 					break;
 			}
 			
-			 //Debug output
-			/*cout<<"Some command happened at cycle: "<<currentClockCycle<<endl;
-			if (!returnDataPackets.empty())
-				cout<<returnDataPackets.front()->data<<endl;
-			*/currentCommand= NULL;
+			//sim output
+			currentCommand->print(currentClockCycle);
+			currentCommand= NULL;
 		} 
 		controlCyclesLeft--;
 	} else{

@@ -10,18 +10,24 @@ Ssd::Ssd(uint id, string dev, string sys, string pwd, string trc){
 	int i, j;
 	controller= new Controller(this);
 	packages= new vector<Package>();
+	Die *die;
 
 	for (i= 0; i < NUM_PACKAGES; i++){
 		Package pack;
 		pack.channel= new Channel();
+		pack.channel->attachController(controller);
 		for (j= 0; j < NUM_DIES; j++){
-			Die die= Die();
-			die.attachToChannel(pack.channel);
+			die= new Die();
+			cout<<pack.channel<<endl;
+			die->attachToChannel(pack.channel);
 			pack.dies.push_back(die);
 		}
 		packages->push_back(pack);
 	}
 	controller->attachPackages(packages);
+	
+	ReturnReadData= NULL;
+	WriteDataDone= NULL;
 
 	currentClockCycle= 0;
 }
@@ -47,20 +53,16 @@ void Ssd::printStats(void){
 
 void Ssd::update(void){
 	int i, j;
+	Package package;
+
 	for (i= 0; i < packages->size(); i++){
-		//cout<<"before package init\n";
-		Package package= (*packages)[i];
-		//cout<<"after package init\n";
+		package= (*packages)[i];
 		for (j= 0; j < package.dies.size() ; j++){
-			//cout<<"before first die update\n";
-			package.dies[j].update();
-			//cout<<"after first die update\n";
-			package.dies[j].step();
+			package.dies[j]->update();
+			package.dies[j]->step();
 		}
 	}
-	//cout<<"before first controller update\n";
 	controller->update();
-	//cout<<"after first controller update\n";
 	controller->step();
 
 	step();

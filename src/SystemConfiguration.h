@@ -23,7 +23,7 @@
 	#define DEBUGN(str) ;
 #endif
 
-/*#ifndef NO_OUTPUT
+#ifndef NO_OUTPUT
 	#define PRINT(str)  if(SHOW_SIM_OUTPUT) { std::cerr <<str<<std::endl; }
 	#define PRINTN(str) if(SHOW_SIM_OUTPUT) { std::cerr <<str; }
 #else
@@ -33,8 +33,7 @@
 	#define DEBUGN(str) ;
 	#define PRINT(str) ;
 	#define PRINTN(str) ;
-#endif*/
-#define PRINT(str) ;
+#endif
 
 extern uint NUM_PACKAGES;
 extern uint NUM_DIES;
@@ -54,6 +53,8 @@ extern uint WRITE_TIME;
 extern uint ERASE_TIME;
 extern uint DATA_TIME;
 extern uint COMMAND_TIME;
+
+extern uint SHOW_SIM_OUTPUT;
 
 namespace SSDSim{
 	typedef void (*returnCallBack_t)(uint id, uint64_t addr, uint64_t clockcycle);

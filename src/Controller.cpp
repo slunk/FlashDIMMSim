@@ -45,16 +45,12 @@ void Controller::update(void){
 	
 	//Check for commands/data on a channel. If there is, see if it is done on channel
 	for (i= 0; i < outgoingPackets.size(); i++){
-		if (currentClockCycle == 0 || currentClockCycle == 1)
-		//cout<<outgoingPackets[i]<<endl;
 		if (outgoingPackets[i] != NULL){
-			//cout<<i<<" anything ever getting here? "<<channelXferCyclesLeft[i]<<endl;
 
 			channelXferCyclesLeft[i]--;
-			//cout<<channelXferCyclesLeft[i]<<endl;;
 			if (channelXferCyclesLeft[i] == 0){
-				cout<<"yup"<<endl;
-				(*packages)[outgoingPackets[i]->package].dies[outgoingPackets[i]->die].receiveFromChannel(outgoingPackets[i]);
+				//outgoingPackets[i]->print(currentClockCycle);
+				(*packages)[outgoingPackets[i]->package].dies[outgoingPackets[i]->die]->receiveFromChannel(outgoingPackets[i]);
 				//packages[outgoingPackets[i]->package].channel->releaseChannel();
 				outgoingPackets[i]= NULL;
 			}
@@ -67,14 +63,12 @@ void Controller::update(void){
 			//if we can get the channel (channel contention not implemented yet)
 			outgoingPackets[i]= channelQueues[i].front();
 			channelQueues[i].pop();
-			//cout<<currentClockCycle<<" "<<outgoingPackets[0]->busPacketType<<" "<<DATA<<" "<<DATA_TIME<<endl;
 			switch (outgoingPackets[i]->busPacketType){
 				case DATA:
 					channelXferCyclesLeft[i]= DATA_TIME;
 					break;
 				default:
 					channelXferCyclesLeft[i]= COMMAND_TIME;
-					cout<<i<<" "<<channelXferCyclesLeft[i];
 					break;
 			}
 		}
@@ -83,6 +77,7 @@ void Controller::update(void){
 	//Look for new transactions. If there are any, translate their address, make buspackets, and place in appropriate channel queue
 	//Everything past his point will probably need some drasic changes in future iterations
 	while (transactionQueue.size() > 0){//This is probably a terrible way to do this
+		transactionQueue.front().print();
 		switch (transactionQueue.front().transactionType){
 			case DATA_READ:{
 				BusPacket *readPacket= ftl.translate(READ, transactionQueue.front());

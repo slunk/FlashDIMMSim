@@ -20,13 +20,31 @@ BusPacket::BusPacket(BusPacketType packtype, uint64_t physicalAddr, uint page_nu
 
 BusPacket::BusPacket() {}
 
-void BusPacket::print(uint64_t currentClockCyle){
+void BusPacket::print(uint64_t currentClockCycle){
 	if (this == NULL)
 		return;
 
 
 	//simple for now
-	cout<<"Type: "<<busPacketType<<" addr: "<<physicalAddress<<" die: "<<die<<" plane: "<<plane<<" block: "<<block<<" page: "<<page<<" data: "<<data<<endl;
+	switch (busPacketType){
+		case(READ):
+			PRINT("Cycle: "<<currentClockCycle<<" Type: READ addr: "<<physicalAddress<<" die: "<<die<<" plane: "<<plane<<" block: "<<block<<" page: "<<page<<" data: "<<data);
+			break;
+		case(WRITE):
+			PRINT("Cycle: "<<currentClockCycle<<" Type: WRITE addr: "<<physicalAddress<<" die: "<<die<<" plane: "<<plane<<" block: "<<block<<" page: "<<page<<" data: "<<data);
+			break;
+		case (ERASE):
+			PRINT("Cycle: "<<currentClockCycle<<" Type: ERASE addr: "<<physicalAddress<<" die: "<<die<<" plane: "<<plane<<" block: "<<block<<" page: "<<page<<" data: "<<data);
+			break;
+		case(DATA):
+			PRINT("Cycle: "<<currentClockCycle<<" Type: DATA addr: "<<physicalAddress<<" die: "<<die<<" plane: "<<plane<<" block: "<<block<<" page: "<<page<<" data: "<<data);
+			break;
+		default:
+			PRINT("Invalid busPacket type");
+			break;
+	}
+
+
 }
 
 void BusPacket::printData(const void *data) 

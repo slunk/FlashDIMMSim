@@ -13,7 +13,7 @@
 namespace SSDSim{
 	typedef struct {
 		Channel *channel;
-		std::vector<Die> dies;
+		std::vector<Die *> dies;
 	} Package;
 
 	class Ssd;
