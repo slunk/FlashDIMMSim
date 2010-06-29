@@ -29,9 +29,19 @@ void Die::receiveFromChannel(BusPacket *busPacket){
 	busPacket->print(currentClockCycle);
 	if (busPacket->busPacketType == DATA){
 		planes[busPacket->plane].storeInData(busPacket);
-	} else{
+	} else if (currentCommand == NULL) {
 		commands.push(busPacket);
+	} else{
+		ERROR("Die is busy\n");
+		exit(1);
 	}
+}
+
+int Die::isPlaneBusy(BusPacket *busPacket){
+	if (currentCommand == NULL){
+		return 0;
+	}
+	return 1;
 }
 
 void Die::update(void){

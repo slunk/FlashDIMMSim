@@ -18,6 +18,7 @@ namespace SSDSim{
 			Die(void);
 			void attachToChannel(Channel *chan);
 			void receiveFromChannel(BusPacket *busPacket);
+			int isPlaneBusy(BusPacket *busPacket);
 			void update(void);
 		private:
 			Channel *channel;

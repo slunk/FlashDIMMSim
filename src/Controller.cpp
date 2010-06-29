@@ -45,11 +45,10 @@ void Controller::update(void){
 	
 	//Check for commands/data on a channel. If there is, see if it is done on channel
 	for (i= 0; i < outgoingPackets.size(); i++){
-		if (outgoingPackets[i] != NULL){
+		if (outgoingPackets[i] != NULL && !(*packages)[outgoingPackets[i]->package].dies[outgoingPackets[i]->die]->isPlaneBusy(outgoingPackets[i])){
 
 			channelXferCyclesLeft[i]--;
 			if (channelXferCyclesLeft[i] == 0){
-				//outgoingPackets[i]->print(currentClockCycle);
 				(*packages)[outgoingPackets[i]->package].dies[outgoingPackets[i]->die]->receiveFromChannel(outgoingPackets[i]);
 				//packages[outgoingPackets[i]->package].channel->releaseChannel();
 				outgoingPackets[i]= NULL;
@@ -77,7 +76,7 @@ void Controller::update(void){
 	//Look for new transactions. If there are any, translate their address, make buspackets, and place in appropriate channel queue
 	//Everything past his point will probably need some drasic changes in future iterations
 	while (transactionQueue.size() > 0){//This is probably a terrible way to do this
-		transactionQueue.front().print();
+		//transactionQueue.front().print();
 		switch (transactionQueue.front().transactionType){
 			case DATA_READ:{
 				BusPacket *readPacket= ftl.translate(READ, transactionQueue.front());
