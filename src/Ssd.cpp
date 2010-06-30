@@ -48,7 +48,9 @@ string Ssd::SetOutputFileName(string tracefilename){
 	return "";
 }
 
-void Ssd::RegisterCallbacks(Callback_t *readDone, Callback_t *writeDone){
+void Ssd::RegisterCallbacks(Callback_t *readCB, Callback_t *writeCB){
+	ReturnReadData = readCB;
+	WriteDataDone = writeCB;
 }
 
 void Ssd::printStats(void){

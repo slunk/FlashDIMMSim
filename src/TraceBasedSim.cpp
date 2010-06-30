@@ -15,7 +15,7 @@
 #include <time.h>
 
 #define NUM_WRITES 100
-#define SIM_CYCLES 10000
+#define SIM_CYCLES 100000
 
 /*temporary assignments for externed variables.
  * This should really be done with another class
@@ -43,7 +43,7 @@ using namespace std;
 
 int main(void){
 	clock_t start= clock(), end;
-	int write, cycle;
+	uint write, cycle;
 	Ssd *ssd= new Ssd(0,"","","","");
 	Transaction t;
 
@@ -54,11 +54,17 @@ int main(void){
 
 	for (cycle= 0; cycle<SIM_CYCLES; cycle++){
 		(*ssd).update();
+		/*if (cycle < NUM_WRITES){
+			t= Transaction(DATA_READ, cycle*4, (void *)0xfeedface);
+			(*ssd).add(t);
+		}*/
+		if (ssd->numWrites == NUM_WRITES)
+			break;
 	}
 
 	end= clock();
 	cout<<"Simulation Results:\n";
-	cout<<"Cycles simulated: "<<SIM_CYCLES<<endl;
+	cout<<"Cycles simulated: "<<cycle<<endl;
 	cout<<"Reads completed: "<<ssd->numReads<<endl;
 	cout<<"Writes completed: "<<ssd->numWrites<<endl;
 	cout<<"Erases completed: "<<ssd->numErases<<endl;

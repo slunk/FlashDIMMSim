@@ -19,7 +19,7 @@ void Plane::read(BusPacket *busPacket){
 		dataReg= busPacket;
 	} else{
 		cerr<<"Invalid read: Block hasn't been written to\n";
-		exit(1);
+		dataReg= NULL;
 	}
 }
 
