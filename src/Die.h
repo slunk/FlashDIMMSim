@@ -15,12 +15,13 @@ namespace SSDSim{
 	class Ssd;
 	class Die : public SimulatorObject{
 		public:
-			Die(void);
+			Die(Ssd *parent);
 			void attachToChannel(Channel *chan);
 			void receiveFromChannel(BusPacket *busPacket);
 			int isPlaneBusy(BusPacket *busPacket);
 			void update(void);
 		private:
+			Ssd *parentSsd;
 			Channel *channel;
 			uint dataCyclesLeft;
 			//std::vector<uint> controlCyclesLeft;//since separate planes can theoretically read, write, and erase at the same time

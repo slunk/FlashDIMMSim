@@ -1,13 +1,28 @@
+/*TraceBasedSim.cpp
+ *
+ * This will eventually run traces. Right now the name is a little misleading...
+ * It adds a certain amount (NUM_WRITES) of write transactions to the ssd
+ * linearly starting at address 0 and then simulates a certain number (SIM_CYCLES)
+ * of cycles before exiting.
+ *
+ * The output should be fairly straightforward. If you would like to see the writes
+ * as they take place, change SHOW_SIM_OUTPUT= 0; (line 37) to SHOW_SIM_OUTPUT= 1;
+ */
 #include <iostream>
 #include "SystemConfiguration.h"
 #include "Ssd.h"
 #include "Transaction.h"
 #include <time.h>
 
-#define SIM_CYCLES 30
+#define NUM_WRITES 100
+#define SIM_CYCLES 10000
 
 /*temporary assignments for externed variables.
- * Using values from a samsung ssd*/
+ * This should really be done with another class
+ * that reads .ini files
+ *
+ * values from a samsung ssd:
+ * */
 uint NUM_PACKAGES= 1;
 uint NUM_DIES= 2;
 uint NUM_PLANES= 4;
@@ -27,11 +42,27 @@ using namespace SSDSim;
 using namespace std;
 
 int main(void){
-	int cycle, numCycles= SIM_CYCLES;
+	clock_t start= clock(), end;
+	int write, cycle;
 	Ssd *ssd= new Ssd(0,"","","","");
+	Transaction t;
 
-	for (cycle= 0; cycle<numCycles; cycle++){
+	for (write= 0; write<NUM_WRITES; write++){
+		t= Transaction(DATA_WRITE, write*4, (void *)0xdeadbeef);
+		(*ssd).add(t);
+	}
+
+	for (cycle= 0; cycle<SIM_CYCLES; cycle++){
 		(*ssd).update();
 	}
+
+	end= clock();
+	cout<<"Simulation Results:\n";
+	cout<<"Cycles simulated: "<<SIM_CYCLES<<endl;
+	cout<<"Reads completed: "<<ssd->numReads<<endl;
+	cout<<"Writes completed: "<<ssd->numWrites<<endl;
+	cout<<"Erases completed: "<<ssd->numErases<<endl;
+	cout<<"Execution time: "<<(end-start)<<" cycles. "<<(double)(end-start)/CLOCKS_PER_SEC<<" seconds.\n";
+
 	return 0;
 }

@@ -30,7 +30,7 @@ namespace SSDSim{
 			Callback_t* ReturnReadData;
 			Callback_t* WriteDataDone;
 
-			uint systemID;
+			uint systemID, numReads, numWrites, numErases;
 			Package p;
 		private:
 	};

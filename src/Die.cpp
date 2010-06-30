@@ -9,7 +9,9 @@
 using namespace SSDSim;
 using namespace std;
 
-Die::Die(void){
+Die::Die(Ssd *parent){
+	parentSsd= parent;
+
 	planes= vector<Plane>(NUM_PLANES, Plane());
 
 	currentCommand= NULL;
@@ -51,10 +53,12 @@ void Die::update(void){
 				case READ:
 					planes[currentCommand->plane].read(currentCommand);
 					returnDataPackets.push(planes[currentCommand->plane].readFromData());
+					parentSsd->numReads++;
 					PRINT("READ");
 					break;
 				case WRITE:
 					planes[currentCommand->plane].write(currentCommand);
+					parentSsd->numWrites++;
 					//the following two lines are terrible. TODO: edit classes so that this isn't so damn messy
 					if (channel->controller->parentSsd->WriteDataDone != NULL){
 						(*channel->controller->parentSsd->WriteDataDone)(channel->controller->parentSsd->systemID, currentCommand->physicalAddress, currentClockCycle);
@@ -63,6 +67,7 @@ void Die::update(void){
 					break;
 				case ERASE:
 					planes[currentCommand->plane].erase(currentCommand);
+					parentSsd->numErases++;
 					PRINT("ERASE");
 					break;
 				default:
@@ -70,7 +75,7 @@ void Die::update(void){
 			}
 			
 			//sim output
-			//currentCommand->print(currentClockCycle);
+			currentCommand->print(currentClockCycle);
 			currentCommand= NULL;
 		} 
 		controlCyclesLeft--;

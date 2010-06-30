@@ -18,8 +18,7 @@ Ssd::Ssd(uint id, string dev, string sys, string pwd, string trc){
 		pack.channel= new Channel();
 		pack.channel->attachController(controller);
 		for (j= 0; j < NUM_DIES; j++){
-			die= new Die();
-			cout<<pack.channel<<endl;
+			die= new Die(this);
 			die->attachToChannel(pack.channel);
 			pack.dies.push_back(die);
 		}
@@ -30,6 +29,9 @@ Ssd::Ssd(uint id, string dev, string sys, string pwd, string trc){
 	ReturnReadData= NULL;
 	WriteDataDone= NULL;
 
+	numReads= 0;
+	numWrites= 0;
+	numErases= 0;
 	currentClockCycle= 0;
 }
 
