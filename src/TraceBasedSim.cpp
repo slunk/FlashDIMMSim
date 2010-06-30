@@ -1,20 +1,37 @@
+#include <iostream>
 #include "SystemConfiguration.h"
-/*temporary assignments for externed variables*/
-uint NUM_PACKAGES;
-uint NUM_DIES;
-uint NUM_PLANES;
-uint NUM_BLOCKS;
-uint NUM_PAGES;
-uint PAGE_SIZE;
+#include "Ssd.h"
+#include "Transaction.h"
+#include <time.h>
 
-uint READ_TIME;
-uint WRITE_TIME;
-uint ERASE_TIME;
-uint DATA_TIME;
-uint COMMAND_TIME;
+#define SIM_CYCLES 30
 
-uint SHOW_SIM_OUTPUT;
+/*temporary assignments for externed variables.
+ * Using values from a samsung ssd*/
+uint NUM_PACKAGES= 1;
+uint NUM_DIES= 2;
+uint NUM_PLANES= 4;
+uint NUM_BLOCKS= 2048;
+uint NUM_PAGES= 64;
+uint PAGE_SIZE= 4;
+
+uint READ_TIME= 25;
+uint WRITE_TIME= 200;
+uint ERASE_TIME= 1500;
+uint DATA_TIME= 100;
+uint COMMAND_TIME= 10;
+
+uint SHOW_SIM_OUTPUT= 0;
+
+using namespace SSDSim;
+using namespace std;
 
 int main(void){
+	int cycle, numCycles= SIM_CYCLES;
+	Ssd *ssd= new Ssd(0,"","","","");
+
+	for (cycle= 0; cycle<numCycles; cycle++){
+		(*ssd).update();
+	}
 	return 0;
 }
