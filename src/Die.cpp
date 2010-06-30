@@ -26,7 +26,7 @@ void Die::attachToChannel(Channel *chan){
 }
 
 void Die::receiveFromChannel(BusPacket *busPacket){
-	busPacket->print(currentClockCycle);
+	//busPacket->print(currentClockCycle);
 	if (busPacket->busPacketType == DATA){
 		planes[busPacket->plane].storeInData(busPacket);
 	} else if (currentCommand == NULL) {
@@ -70,7 +70,7 @@ void Die::update(void){
 			}
 			
 			//sim output
-			currentCommand->print(currentClockCycle);
+			//currentCommand->print(currentClockCycle);
 			currentCommand= NULL;
 		} 
 		controlCyclesLeft--;

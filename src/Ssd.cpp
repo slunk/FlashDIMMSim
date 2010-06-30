@@ -7,7 +7,8 @@ using namespace SSDSim;
 using namespace std;
 
 Ssd::Ssd(uint id, string dev, string sys, string pwd, string trc){
-	int i, j;
+	uint i, j;
+	
 	controller= new Controller(this);
 	packages= new vector<Package>();
 	Die *die;
@@ -52,7 +53,7 @@ void Ssd::printStats(void){
 }
 
 void Ssd::update(void){
-	int i, j;
+	uint i, j;
 	Package package;
 
 	for (i= 0; i < packages->size(); i++){

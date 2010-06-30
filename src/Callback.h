@@ -43,6 +43,6 @@ class Callback: public CallbackBase<ReturnT,Param1T,Param2T,Param3T>
         const PtrMember  member;
 };
 
-} // namespace DRAMSim 
+} // namespace SSDSim 
 
 #endif

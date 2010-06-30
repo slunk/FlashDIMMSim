@@ -7,8 +7,6 @@
 using namespace SSDSim;
 
 Controller::Controller(Ssd* parent){
-	int i, j;
-
 	parentSsd= parent;
 
 	channelXferCyclesLeft= vector<uint>(NUM_PACKAGES, 0);
@@ -41,7 +39,7 @@ void Controller::receiveFromChannel(BusPacket *busPacket){
 }
 
 void Controller::update(void){
-	int i;
+	uint i;
 	
 	//Check for commands/data on a channel. If there is, see if it is done on channel
 	for (i= 0; i < outgoingPackets.size(); i++){
