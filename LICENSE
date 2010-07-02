@@ -1,4 +1,4 @@
-SSDSim: A reasonably accurate flash SSD simulator.
+FlashDIMMSim: A reasonably accurate flash DIMM simulator.
 
 Copyright (C) 2010	Peter Enns <slunk at umd dot edu>
 										
