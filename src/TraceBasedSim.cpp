@@ -1,7 +1,7 @@
 /*TraceBasedSim.cpp
  *
  * This will eventually run traces. Right now the name is a little misleading...
- * It adds a certain amount (NUM_WRITES) of write transactions to the ssd
+ * It adds a certain amount (NUM_WRITES) of write transactions to the flash dimm
  * linearly starting at address 0 and then simulates a certain number (SIM_CYCLES)
  * of cycles before exiting.
  *
@@ -10,7 +10,7 @@
  */
 #include <iostream>
 #include "SystemConfiguration.h"
-#include "Ssd.h"
+#include "FlashDIMM.h"
 #include "Transaction.h"
 #include <time.h>
 
@@ -21,13 +21,13 @@
  * This should really be done with another class
  * that reads .ini files
  *
- * values from a samsung ssd:
+ * values from a samsung flash dimm:
  * */
 uint NUM_PACKAGES= 1;
-uint NUM_DIES= 2;
-uint NUM_PLANES= 4;
-uint NUM_BLOCKS= 2048;
-uint NUM_PAGES= 64;
+uint DIES_PER_PACKAGE= 2;
+uint PLANES_PER_DIE= 4;
+uint BLOCKS_PER_PLANE= 2048;
+uint PAGES_PER_BLOCK= 64;
 uint PAGE_SIZE= 4;
 
 uint READ_TIME= 25;
@@ -38,36 +38,36 @@ uint COMMAND_TIME= 10;
 
 uint SHOW_SIM_OUTPUT= 0;
 
-using namespace SSDSim;
+using namespace FDSim;
 using namespace std;
 
 int main(void){
 	clock_t start= clock(), end;
 	uint write, cycle;
-	Ssd *ssd= new Ssd(0,"","","","");
+	FlashDIMM *flashDimm= new FlashDIMM(0,"ini/samsung.ini","","","");
 	Transaction t;
 
 	for (write= 0; write<NUM_WRITES; write++){
 		t= Transaction(DATA_WRITE, write*4, (void *)0xdeadbeef);
-		(*ssd).add(t);
+		(*flashDimm).add(t);
 	}
 
 	for (cycle= 0; cycle<SIM_CYCLES; cycle++){
-		(*ssd).update();
+		(*flashDimm).update();
 		/*if (cycle < NUM_WRITES){
 			t= Transaction(DATA_READ, cycle*4, (void *)0xfeedface);
-			(*ssd).add(t);
+			(*flashDimm).add(t);
 		}*/
-		if (ssd->numWrites == NUM_WRITES)
+		if (flashDimm->numWrites == NUM_WRITES)
 			break;
 	}
 
 	end= clock();
 	cout<<"Simulation Results:\n";
 	cout<<"Cycles simulated: "<<cycle<<endl;
-	cout<<"Reads completed: "<<ssd->numReads<<endl;
-	cout<<"Writes completed: "<<ssd->numWrites<<endl;
-	cout<<"Erases completed: "<<ssd->numErases<<endl;
+	cout<<"Reads completed: "<<flashDimm->numReads<<endl;
+	cout<<"Writes completed: "<<flashDimm->numWrites<<endl;
+	cout<<"Erases completed: "<<flashDimm->numErases<<endl;
 	cout<<"Execution time: "<<(end-start)<<" cycles. "<<(double)(end-start)/CLOCKS_PER_SEC<<" seconds.\n";
 
 	return 0;

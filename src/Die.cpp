@@ -4,15 +4,15 @@
 #include "Die.h"
 #include "Channel.h"
 #include "Controller.h"
-#include "Ssd.h"
+#include "FlashDIMM.h"
 
-using namespace SSDSim;
+using namespace FDSim;
 using namespace std;
 
-Die::Die(Ssd *parent){
-	parentSsd= parent;
+Die::Die(FlashDIMM *parent){
+	parentFlashDIMM= parent;
 
-	planes= vector<Plane>(NUM_PLANES, Plane());
+	planes= vector<Plane>(PLANES_PER_DIE, Plane());
 
 	currentCommand= NULL;
 
@@ -28,7 +28,6 @@ void Die::attachToChannel(Channel *chan){
 }
 
 void Die::receiveFromChannel(BusPacket *busPacket){
-	//busPacket->print(currentClockCycle);
 	if (busPacket->busPacketType == DATA){
 		planes[busPacket->plane].storeInData(busPacket);
 	} else if (currentCommand == NULL) {
@@ -40,6 +39,10 @@ void Die::receiveFromChannel(BusPacket *busPacket){
 }
 
 int Die::isPlaneBusy(BusPacket *busPacket){
+	//not actually if a single plane is busy (tests if die is busy).
+	//only one command gets executed by a die at a time
+	//If concurrency between planes gets added (which may be necessary)
+	//this function will have to change along with a lot of other stuff...
 	if (currentCommand == NULL){
 		return 0;
 	}
@@ -53,22 +56,19 @@ void Die::update(void){
 				case READ:
 					planes[currentCommand->plane].read(currentCommand);
 					returnDataPackets.push(planes[currentCommand->plane].readFromData());
-					parentSsd->numReads++;
-					PRINT("READ");
+					parentFlashDIMM->numReads++;
 					break;
 				case WRITE:
 					planes[currentCommand->plane].write(currentCommand);
-					parentSsd->numWrites++;
-					//the following two lines are terrible. TODO: edit classes so that this isn't so damn messy
-					if (channel->controller->parentSsd->WriteDataDone != NULL){
-						(*channel->controller->parentSsd->WriteDataDone)(channel->controller->parentSsd->systemID, currentCommand->physicalAddress, currentClockCycle);
+					parentFlashDIMM->numWrites++;
+					//call read callback
+					if (parentFlashDIMM->WriteDataDone != NULL){
+						(*parentFlashDIMM->WriteDataDone)(parentFlashDIMM->systemID, currentCommand->physicalAddress, currentClockCycle);
 					}
-					PRINT("WRITE");
 					break;
 				case ERASE:
 					planes[currentCommand->plane].erase(currentCommand);
-					parentSsd->numErases++;
-					PRINT("ERASE");
+					parentFlashDIMM->numErases++;
 					break;
 				default:
 					break;
@@ -76,6 +76,7 @@ void Die::update(void){
 			
 			//sim output
 			currentCommand->print(currentClockCycle);
+			delete(currentCommand);
 			currentCommand= NULL;
 		} 
 		controlCyclesLeft--;

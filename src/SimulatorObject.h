@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-namespace SSDSim
+namespace FDSim
 {
 	class SimulatorObject
 	{

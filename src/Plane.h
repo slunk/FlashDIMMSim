@@ -7,7 +7,7 @@
 #include "Block.h"
 #include "BusPacket.h"
 
-namespace SSDSim{
+namespace FDSim{
 	class Plane{
 		public:
 			Plane(void);

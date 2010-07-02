@@ -7,7 +7,7 @@
 
 #include "SystemConfiguration.h"
 
-namespace SSDSim
+namespace FDSim
 {
 	enum BusPacketType
 	{

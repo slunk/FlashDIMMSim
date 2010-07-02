@@ -7,7 +7,7 @@
 #include "Die.h"
 #include "BusPacket.h"
 
-namespace SSDSim{
+namespace FDSim{
 	typedef enum{
 		CHANNEL_FREE,
 		CHANNEL_BUSY

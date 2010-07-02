@@ -2,12 +2,12 @@
 //Class files for controller
 
 #include "Controller.h"
-#include "Ssd.h"
+#include "FlashDIMM.h"
 
-using namespace SSDSim;
+using namespace FDSim;
 
-Controller::Controller(Ssd* parent){
-	parentSsd= parent;
+Controller::Controller(FlashDIMM* parent){
+	parentFlashDIMM= parent;
 
 	channelXferCyclesLeft= vector<uint>(NUM_PACKAGES, 0);
 
@@ -28,8 +28,8 @@ bool Controller::addTransaction(Transaction &trans){
 }
 
 void Controller::returnReadData(const Transaction  &trans){
-	if(parentSsd->ReturnReadData!=NULL){
-		(*parentSsd->ReturnReadData)(parentSsd->systemID, trans.address, currentClockCycle);
+	if(parentFlashDIMM->ReturnReadData!=NULL){
+		(*parentFlashDIMM->ReturnReadData)(parentFlashDIMM->systemID, trans.address, currentClockCycle);
 	}
 }
 
@@ -99,6 +99,7 @@ void Controller::update(void){
 	
 	//See if any read data is ready to return
 	while (!returnTransaction.empty()){
+		//call return callback
 		returnReadData(returnTransaction.back());
 		returnTransaction.pop_back();
 	}

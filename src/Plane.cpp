@@ -4,7 +4,7 @@
 
 #include "Plane.h"
 
-using namespace SSDSim;
+using namespace FDSim;
 using namespace std;
 
 Plane::Plane(void){
@@ -18,8 +18,8 @@ void Plane::read(BusPacket *busPacket){
 		busPacket->busPacketType= DATA;
 		dataReg= busPacket;
 	} else{
-		cerr<<"Invalid read: Block hasn't been written to\n";
-		dataReg= NULL;
+		ERROR("Invalid read: Block "<<busPacket->block<<" hasn't been written to");
+		dataReg= new BusPacket();//garbage packet... might be better to set values
 	}
 }
 

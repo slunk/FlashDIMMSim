@@ -10,16 +10,16 @@
 #include "Channel.h"
 #include "Transaction.h"
 
-namespace SSDSim{
+namespace FDSim{
 	typedef struct {
 		Channel *channel;
 		std::vector<Die *> dies;
 	} Package;
 
-	class Ssd;
+	class FlashDIMM;
 	class Controller : public SimulatorObject{
 		public:
-			Controller(Ssd* parent);
+			Controller(FlashDIMM* parent);
 
 			bool addTransaction(Transaction &trans);
 			void attachPackages(vector<Package> *packages);
@@ -27,7 +27,7 @@ namespace SSDSim{
 			void attachChannel(Channel *channel);
 			void receiveFromChannel(BusPacket *busPacket);
 			void update(void);
-			Ssd *parentSsd;
+			FlashDIMM *parentFlashDIMM;
 		private:
 
 			std::queue<Transaction> transactionQueue;

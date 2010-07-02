@@ -9,7 +9,7 @@
 
 using namespace std;
 
-namespace SSDSim
+namespace FDSim
 {
 	enum TransactionType
 	{

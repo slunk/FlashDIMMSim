@@ -5,7 +5,7 @@
 
 #include "SystemConfiguration.h"
 
-namespace SSDSim{
+namespace FDSim{
 	class Block{
 		public:
 			Block(uint block_num);

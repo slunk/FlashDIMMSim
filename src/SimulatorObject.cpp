@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include "SimulatorObject.h"
 
-using namespace SSDSim;
+using namespace FDSim;
 using namespace std;
 
 void SimulatorObject::step()

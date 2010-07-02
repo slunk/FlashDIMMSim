@@ -1,12 +1,13 @@
-//Ssd.cpp
-//Class file for ssd system wrapper
+//FlashDIMM.cpp
+//Class file for flash fimm system wrapper
 
-#include "Ssd.h"
+#include "FlashDIMM.h"
+//#include "IniReader.h"
 
-using namespace SSDSim;
+using namespace FDSim;
 using namespace std;
 
-Ssd::Ssd(uint id, string dev, string sys, string pwd, string trc){
+FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
 	uint i, j;
 	
 	controller= new Controller(this);
@@ -17,7 +18,7 @@ Ssd::Ssd(uint id, string dev, string sys, string pwd, string trc){
 		Package pack;
 		pack.channel= new Channel();
 		pack.channel->attachController(controller);
-		for (j= 0; j < NUM_DIES; j++){
+		for (j= 0; j < DIES_PER_PACKAGE; j++){
 			die= new Die(this);
 			die->attachToChannel(pack.channel);
 			pack.dies.push_back(die);
@@ -26,6 +27,9 @@ Ssd::Ssd(uint id, string dev, string sys, string pwd, string trc){
 	}
 	controller->attachPackages(packages);
 	
+	//get device parameters
+	//IniReader::ReadIniFile(dev, false);
+
 	ReturnReadData= NULL;
 	WriteDataDone= NULL;
 
@@ -35,28 +39,28 @@ Ssd::Ssd(uint id, string dev, string sys, string pwd, string trc){
 	currentClockCycle= 0;
 }
 
-bool Ssd::add(Transaction &trans){
+bool FlashDIMM::add(Transaction &trans){
 	controller->addTransaction(trans);
 	return true;
 }
 
-bool Ssd::addTransaction(bool isWrite, uint64_t addr){
+bool FlashDIMM::addTransaction(bool isWrite, uint64_t addr){
 	return true;
 }
 
-string Ssd::SetOutputFileName(string tracefilename){
+string FlashDIMM::SetOutputFileName(string tracefilename){
 	return "";
 }
 
-void Ssd::RegisterCallbacks(Callback_t *readCB, Callback_t *writeCB){
+void FlashDIMM::RegisterCallbacks(Callback_t *readCB, Callback_t *writeCB){
 	ReturnReadData = readCB;
 	WriteDataDone = writeCB;
 }
 
-void Ssd::printStats(void){
+void FlashDIMM::printStats(void){
 }
 
-void Ssd::update(void){
+void FlashDIMM::update(void){
 	uint i, j;
 	Package package;
 

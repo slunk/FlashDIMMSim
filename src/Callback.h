@@ -2,7 +2,7 @@
 #ifndef CALLBACK_H
 #define CALLBACK_H
 
-namespace SSDSim {
+namespace FDSim {
 
 template <typename ReturnT, typename Param1T, typename Param2T, 
                     typename Param3T>
@@ -14,7 +14,7 @@ class CallbackBase
 };
 
 template <typename Return, typename Param1T, typename Param2T, typename Param3T>
-SSDSim::CallbackBase<Return,Param1T,Param2T,Param3T>::~CallbackBase(){}
+FDSim::CallbackBase<Return,Param1T,Param2T,Param3T>::~CallbackBase(){}
 
 template <typename ConsumerT, typename ReturnT, 
                         typename Param1T, typename Param2T, typename Param3T >
@@ -43,6 +43,6 @@ class Callback: public CallbackBase<ReturnT,Param1T,Param2T,Param3T>
         const PtrMember  member;
 };
 
-} // namespace SSDSim 
+} // namespace FDSim 
 
 #endif

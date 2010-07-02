@@ -5,7 +5,7 @@
 #include "BusPacket.h"
 #include "Controller.h"
 
-using namespace SSDSim;
+using namespace FDSim;
 
 Channel::Channel(void){}
 

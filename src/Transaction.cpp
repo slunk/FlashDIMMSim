@@ -6,7 +6,7 @@
 
 #include "Transaction.h"
 
-using namespace SSDSim;
+using namespace FDSim;
 using namespace std;
 
 Transaction::Transaction(){}

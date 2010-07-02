@@ -8,7 +8,7 @@
 #include "BusPacket.h"
 #include "Transaction.h"
 
-namespace SSDSim{
+namespace FDSim{
 	class Controller;
 	class Ftl : public SimulatorObject{
 		public:

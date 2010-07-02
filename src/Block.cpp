@@ -4,7 +4,7 @@
 #include "Block.h"
 
 using namespace std;
-using namespace SSDSim;
+using namespace FDSim;
 
 Block::Block(uint block){
 	block_num= block;
@@ -17,8 +17,6 @@ void *Block::read(uint page_num){
 		ERROR("Request to read page "<<page_num<<" failed: nothing has been written to that address");
 		return (void *)0x0;
 	} else{
-		//READ
-		//cout<<page_data[page_num]<<endl;
 		return page_data[page_num];
 	}
 }

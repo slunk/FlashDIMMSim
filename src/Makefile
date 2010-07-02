@@ -11,8 +11,8 @@ ifdef PROFILE
 CXXFLAGS = -pg
 endif 
 
-EXE_NAME=SSDSim
-LIB_NAME=libssdsim.so
+EXE_NAME=FDSim
+LIB_NAME=libfdsim.so
 
 SRC = $(wildcard *.cpp)
 OBJ = $(addsuffix .o, $(basename $(SRC)))

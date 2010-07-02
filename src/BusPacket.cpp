@@ -3,7 +3,7 @@
 
 #include "BusPacket.h"
 
-using namespace SSDSim;
+using namespace FDSim;
 using namespace std;
 
 BusPacket::BusPacket(BusPacketType packtype, uint64_t physicalAddr, uint page_num, uint block_num, uint plane_num, uint die_num, uint package_num, void *dat)
