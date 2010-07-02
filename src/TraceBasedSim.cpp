@@ -23,7 +23,8 @@
  *
  * values from a samsung flash dimm:
  * */
-uint NUM_PACKAGES= 1;
+
+/*uint NUM_PACKAGES= 1;
 uint DIES_PER_PACKAGE= 2;
 uint PLANES_PER_DIE= 4;
 uint BLOCKS_PER_PLANE= 2048;
@@ -35,8 +36,8 @@ uint WRITE_TIME= 200;
 uint ERASE_TIME= 1500;
 uint DATA_TIME= 100;
 uint COMMAND_TIME= 10;
-
-uint SHOW_SIM_OUTPUT= 0;
+*/
+uint SHOW_SIM_OUTPUT= 1;
 
 using namespace FDSim;
 using namespace std;
@@ -44,7 +45,7 @@ using namespace std;
 int main(void){
 	clock_t start= clock(), end;
 	uint write, cycle;
-	FlashDIMM *flashDimm= new FlashDIMM(0,"ini/samsung.ini","","","");
+	FlashDIMM *flashDimm= new FlashDIMM(0,"ini/samsung_K9XXG08UXM.ini","ini/def_system.ini","","");
 	Transaction t;
 
 	for (write= 0; write<NUM_WRITES; write++){

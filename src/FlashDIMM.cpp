@@ -2,7 +2,7 @@
 //Class file for flash fimm system wrapper
 
 #include "FlashDIMM.h"
-//#include "IniReader.h"
+#include "IniReader.h"
 
 using namespace FDSim;
 using namespace std;
@@ -10,6 +10,21 @@ using namespace std;
 FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
 	uint i, j;
 	
+	//get device parameters
+	IniReader::ReadIniFile(dev, false);
+	
+	PRINT("\nDevice Information:\n");
+	PRINT("Size (GB): "<<TOTAL_SIZE/(1024*1024));
+	PRINT("Packages/Channels: "<<NUM_PACKAGES);
+	PRINT("Page size (KB): "<<PAGE_SIZE);
+	PRINT("\nTiming Info:\n");
+	PRINT("Read time: "<<READ_TIME);
+	PRINT("Write Time: "<<WRITE_TIME);
+	PRINT("Erase time: "<<ERASE_TIME);
+	PRINT("Channel latency for data: "<<DATA_TIME);
+	PRINT("Channel latency for a command: "<<COMMAND_TIME);
+	PRINT("");
+
 	controller= new Controller(this);
 	packages= new vector<Package>();
 	Die *die;
@@ -27,9 +42,6 @@ FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
 	}
 	controller->attachPackages(packages);
 	
-	//get device parameters
-	//IniReader::ReadIniFile(dev, false);
-
 	ReturnReadData= NULL;
 	WriteDataDone= NULL;
 
