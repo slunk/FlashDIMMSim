@@ -75,8 +75,8 @@ void Die::update(void){
 			}
 			
 			//sim output
-			//currentCommand->print(currentClockCycle);
-			delete(currentCommand);
+			currentCommand->print(currentClockCycle);
+			//delete(currentCommand);
 			currentCommand= NULL;
 		} 
 		controlCyclesLeft--;
