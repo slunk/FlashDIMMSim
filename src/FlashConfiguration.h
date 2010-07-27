@@ -1,5 +1,5 @@
-#ifndef SYSCONFIG_H
-#define SYSCONFIG_H
+#ifndef FLASHCONF_H
+#define FLASHCONF_H
 //SysemConfiguration.h
 //Configuration values, headers, and macros for the whole system
 //
@@ -13,26 +13,45 @@
 
 #include <stdint.h>
 
+//sloppily reusing #defines from dramsim
+#ifndef ERROR
 #define ERROR(str) std::cerr<<"[ERROR ("<<__FILE__<<":"<<__LINE__<<")]: "<<str<<std::endl;
+#endif
 
 #ifdef DEBUG_BUILD
+	#ifndef DEBUG
 	#define DEBUG(str) std::cout<< str <<std::endl;
+	#endif
+	#ifndef DEBUGN
 	#define DEBUGN(str) std::cout<< str;
+	#endif
 #else
+	#ifndef DEBUG
 	#define DEBUG(str) ;
+	#endif
+	#ifndef DEBUGN
 	#define DEBUGN(str) ;
+	#endif
 #endif
 
 #ifndef NO_OUTPUT
-	#define PRINT(str)  if(SHOW_SIM_OUTPUT) { std::cerr <<str<<std::endl; }
-	#define PRINTN(str) if(SHOW_SIM_OUTPUT) { std::cerr <<str; }
+	#ifndef PRINT
+	#define PRINT(str)  if(OUTPUT) { std::cerr <<str<<std::endl; }
+	#endif
+	#ifndef PRINTN
+	#define PRINTN(str) if(OUTPUT) { std::cerr <<str; }
+	#endif
 #else
 	#undef DEBUG
 	#undef DEBUGN
 	#define DEBUG(str) ;
 	#define DEBUGN(str) ;
+	#ifndef PRINT
 	#define PRINT(str) ;
+	#endif
+	#ifndef PRINTN
 	#define PRINTN(str) ;
+	#endif
 #endif
 
 extern uint NUM_PACKAGES;
@@ -54,7 +73,7 @@ extern uint ERASE_TIME;
 extern uint DATA_TIME;
 extern uint COMMAND_TIME;
 
-extern uint SHOW_SIM_OUTPUT;
+extern uint OUTPUT;
 
 namespace FDSim{
 	typedef void (*returnCallBack_t)(uint id, uint64_t addr, uint64_t clockcycle);

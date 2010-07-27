@@ -6,12 +6,12 @@
  * of cycles before exiting.
  *
  * The output should be fairly straightforward. If you would like to see the writes
- * as they take place, change SHOW_SIM_OUTPUT= 0; (line 37) to SHOW_SIM_OUTPUT= 1;
+ * as they take place, change OUTPUT= 0; to OUTPUT= 1;
  */
 #include <iostream>
-#include "SystemConfiguration.h"
+#include "FlashConfiguration.h"
 #include "FlashDIMM.h"
-#include "Transaction.h"
+#include "FlashTransaction.h"
 #include <time.h>
 
 #define NUM_WRITES 100
@@ -37,7 +37,7 @@ uint ERASE_TIME= 1500;
 uint DATA_TIME= 100;
 uint COMMAND_TIME= 10;
 */
-uint SHOW_SIM_OUTPUT= 1;
+uint OUTPUT= 1;
 
 using namespace FDSim;
 using namespace std;
@@ -46,17 +46,17 @@ int main(void){
 	clock_t start= clock(), end;
 	uint write, cycle;
 	FlashDIMM *flashDimm= new FlashDIMM(0,"ini/samsung_K9XXG08UXM.ini","ini/def_system.ini","","");
-	Transaction t;
+	FlashTransaction t;
 
 	for (write= 0; write<NUM_WRITES; write++){
-		t= Transaction(DATA_WRITE, write*4, (void *)0xdeadbeef);
+		t= FlashTransaction(DATA_WRITE, write*4, (void *)0xdeadbeef);
 		(*flashDimm).add(t);
 	}
 
 	for (cycle= 0; cycle<SIM_CYCLES; cycle++){
 		(*flashDimm).update();
 		/*if (cycle < NUM_WRITES){
-			t= Transaction(DATA_READ, cycle*4, (void *)0xfeedface);
+			t= FlashTransaction(DATA_READ, cycle*4, (void *)0xfeedface);
 			(*flashDimm).add(t);
 		}*/
 		if (flashDimm->numWrites == NUM_WRITES)

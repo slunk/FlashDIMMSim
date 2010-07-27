@@ -1,15 +1,15 @@
 #ifndef BUSPACKET_H
 #define BUSPACKET_H
-//BusPacket.h
+//ChannelPacket.h
 //
 //Header file for bus packet object
 //
 
-#include "SystemConfiguration.h"
+#include "FlashConfiguration.h"
 
 namespace FDSim
 {
-	enum BusPacketType
+	enum ChannelPacketType
 	{
 		READ,
 		WRITE,
@@ -17,11 +17,11 @@ namespace FDSim
 		DATA
 	};
 
-	class BusPacket
+	class ChannelPacket
 	{
 	public:
 		//Fields
-		BusPacketType busPacketType;
+		ChannelPacketType busPacketType;
 		uint page;
 		uint block;
 		uint plane;
@@ -31,8 +31,8 @@ namespace FDSim
 		void *data;
 
 		//Functions
-		BusPacket(BusPacketType packtype, uint64_t physicalAddr, uint page, uint block, uint plane, uint die, uint package, void *dat);
-		BusPacket();
+		ChannelPacket(ChannelPacketType packtype, uint64_t physicalAddr, uint page, uint block, uint plane, uint die, uint package, void *dat);
+		ChannelPacket();
 
 		//void print();
 		void print(uint64_t currentClockCycle);

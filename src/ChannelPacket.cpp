@@ -1,12 +1,12 @@
-//BusPacket.cpp
-//Class file for BusPacket object
+//ChannelPacket.cpp
+//Class file for ChannelPacket object
 
-#include "BusPacket.h"
+#include "ChannelPacket.h"
 
 using namespace FDSim;
 using namespace std;
 
-BusPacket::BusPacket(BusPacketType packtype, uint64_t physicalAddr, uint page_num, uint block_num, uint plane_num, uint die_num, uint package_num, void *dat)
+ChannelPacket::ChannelPacket(ChannelPacketType packtype, uint64_t physicalAddr, uint page_num, uint block_num, uint plane_num, uint die_num, uint package_num, void *dat)
 {
 	physicalAddress = physicalAddr;
 	busPacketType = packtype;
@@ -18,9 +18,9 @@ BusPacket::BusPacket(BusPacketType packtype, uint64_t physicalAddr, uint page_nu
 	package = package_num;
 }
 
-BusPacket::BusPacket() {}
+ChannelPacket::ChannelPacket() {}
 
-void BusPacket::print(uint64_t currentClockCycle){
+void ChannelPacket::print(uint64_t currentClockCycle){
 	if (this == NULL)
 		return;
 
@@ -47,7 +47,7 @@ void BusPacket::print(uint64_t currentClockCycle){
 
 }
 
-void BusPacket::printData(const void *data) 
+void ChannelPacket::printData(const void *data) 
 {
 	/*if (data == NULL) 
 	{

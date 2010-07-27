@@ -3,12 +3,12 @@
 //Controller.h
 //header file for controller
 
-#include "SimulatorObject.h"
-#include "SystemConfiguration.h"
+#include "SimObj.h"
+#include "FlashConfiguration.h"
 #include "Ftl.h"
 #include "Die.h"
 #include "Channel.h"
-#include "Transaction.h"
+#include "FlashTransaction.h"
 
 namespace FDSim{
 	typedef struct {
@@ -17,26 +17,26 @@ namespace FDSim{
 	} Package;
 
 	class FlashDIMM;
-	class Controller : public SimulatorObject{
+	class Controller : public SimObj{
 		public:
 			Controller(FlashDIMM* parent);
 
-			bool addTransaction(Transaction &trans);
+			bool addTransaction(FlashTransaction &trans);
 			void attachPackages(vector<Package> *packages);
-			void returnReadData(const Transaction &trans);
+			void returnReadData(const FlashTransaction &trans);
 			void attachChannel(Channel *channel);
-			void receiveFromChannel(BusPacket *busPacket);
+			void receiveFromChannel(ChannelPacket *busPacket);
 			void update(void);
 			FlashDIMM *parentFlashDIMM;
 		private:
 
-			std::queue<Transaction> transactionQueue;
-			std::vector<Transaction> returnTransaction;
+			std::queue<FlashTransaction> transactionQueue;
+			std::vector<FlashTransaction> returnTransaction;
 
 			Ftl ftl;
 			std::vector<Package> *packages;
-			std::vector<std::queue <BusPacket *> > channelQueues;
-			std::vector<BusPacket *> outgoingPackets;
+			std::vector<std::queue <ChannelPacket *> > channelQueues;
+			std::vector<ChannelPacket *> outgoingPackets;
 			
 			std::vector<uint> channelXferCyclesLeft;
 

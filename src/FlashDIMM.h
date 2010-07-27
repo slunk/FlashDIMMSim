@@ -3,20 +3,20 @@
 //FlashDIMM.h
 //Header for flash flash dimm system wrapper
 
-#include "SimulatorObject.h"
-#include "SystemConfiguration.h"
+#include "SimObj.h"
+#include "FlashConfiguration.h"
 #include "Controller.h"
 #include "Die.h"
-#include "Transaction.h"
-#include "Callback.h"
+#include "FlashTransaction.h"
+#include "Callbacks.h"
 
 namespace FDSim{
 	typedef CallbackBase<void,uint,uint64_t,uint64_t> Callback_t;
-	class FlashDIMM : public SimulatorObject{
+	class FlashDIMM : public SimObj{
 		public:
 			FlashDIMM(uint id, string dev, string sys, string pwd, string trc);
 			void update(void);
-			bool add(Transaction &trans);
+			bool add(FlashTransaction &trans);
 			bool addTransaction(bool isWrite, uint64_t addr);
 			void printStats(void);
 			string SetOutputFileName(string tracefilename);

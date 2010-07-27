@@ -27,7 +27,7 @@ void Die::attachToChannel(Channel *chan){
 	channel= chan;
 }
 
-void Die::receiveFromChannel(BusPacket *busPacket){
+void Die::receiveFromChannel(ChannelPacket *busPacket){
 	if (busPacket->busPacketType == DATA){
 		planes[busPacket->plane].storeInData(busPacket);
 	} else if (currentCommand == NULL) {
@@ -38,7 +38,7 @@ void Die::receiveFromChannel(BusPacket *busPacket){
 	}
 }
 
-int Die::isPlaneBusy(BusPacket *busPacket){
+int Die::isPlaneBusy(ChannelPacket *busPacket){
 	//not actually if a single plane is busy (tests if die is busy).
 	//only one command gets executed by a die at a time
 	//If concurrency between planes gets added (which may be necessary)

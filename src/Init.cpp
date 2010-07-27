@@ -1,9 +1,9 @@
-#include "IniReader.h"
+#include "Init.h"
 
 using namespace std;
 
 // these are the values that are extern'd in SystemConfig.h so that they
-// have global scope even though they are set by IniReader
+// have global scope even though they are set by Init
 
 uint NUM_PACKAGES;
 uint DIES_PER_PACKAGE;
@@ -25,7 +25,7 @@ namespace FDSim
 		
 	//Map the string names to the variables they set
 	static ConfigMap configMap[] = {
-		//DEFINE_UINT_PARAM -- see IniReader.h
+		//DEFINE_UINT_PARAM -- see Init.h
 		DEFINE_UINT_PARAM(NUM_PACKAGES,DEV_PARAM),
 		DEFINE_UINT_PARAM(DIES_PER_PACKAGE,DEV_PARAM),
 		DEFINE_UINT_PARAM(PLANES_PER_DIE,DEV_PARAM),
@@ -41,7 +41,7 @@ namespace FDSim
 		{"", NULL, UINT, SYS_PARAM, false} // tracer value to signify end of list; if you delete it, epic fail will result
 	};
 
-	void IniReader::WriteValuesOut(std::ofstream &visDataOut) 
+	void Init::WriteValuesOut(std::ofstream &visDataOut) 
 	{
 		//DEBUG("WRITE CALLED");
 		visDataOut<<"!!SYSTEM_INI"<<endl;
@@ -114,7 +114,7 @@ namespace FDSim
 
 	}
 
-	void IniReader::SetKey(string key, string valueString, bool isSystemParam, size_t lineNumber) 
+	void Init::SetKey(string key, string valueString, bool isSystemParam, size_t lineNumber) 
 	{
 		size_t i;
 		uint intValue;
@@ -201,7 +201,7 @@ namespace FDSim
 		}
 	}
 
-	void IniReader::ReadIniFile(string filename, bool isSystemFile)
+	void Init::ReadIniFile(string filename, bool isSystemFile)
 	{
 		ifstream iniFile;
 		string line;
@@ -264,7 +264,7 @@ namespace FDSim
 				// all characters after the equals are the value
 				valueString = line.substr(equalsIndex+1,strlen-equalsIndex);
 				
-				IniReader::SetKey(key, valueString, lineNumber, isSystemFile);
+				Init::SetKey(key, valueString, lineNumber, isSystemFile);
 				// got to the end of the config map without finding the key
 			}
 		}
@@ -275,18 +275,18 @@ namespace FDSim
 		}
 	}
 
-	void IniReader::OverrideKeys(vector<string> keys, vector<string>values) 
+	void Init::OverrideKeys(vector<string> keys, vector<string>values) 
 	{
 		if (keys.size() != values.size()) {
 			ERROR("-o option is messed up");
 			exit(-1);
 		}
 		for (size_t i=0; i<keys.size(); i++) {
-			IniReader::SetKey(keys[i], values[i]);
+			Init::SetKey(keys[i], values[i]);
 		}
 	}
 
-	bool IniReader::CheckIfAllSet() {
+	bool Init::CheckIfAllSet() {
 		// check to make sure all parameters that we exepected were set 
 		for (size_t i=0; configMap[i].variablePtr != NULL; i++) 
 		{
@@ -314,7 +314,7 @@ namespace FDSim
 		return true;
 	}
 	/*unecessary right now
-	void IniReader::InitEnumsFromStrings() {
+	void Init::InitEnumsFromStrings() {
 		if (ADDRESS_MAPPING_SCHEME == "scheme1") {
 			addressMappingScheme = Scheme1;
 			DEBUG("ADDR SCHEME: 1");
@@ -375,7 +375,7 @@ namespace FDSim
 
 #if 0
 	// Wrote it, but did not use it -- might be handy in the future
-	void IniReader::Trim(string &str) 
+	void Init::Trim(string &str) 
 	{
 		size_t begin,end;
 		if ((begin = str.find_first_not_of(" ")) == string::npos) {

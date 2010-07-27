@@ -1,7 +1,7 @@
-#ifndef SIMULATOROBJ_H
-#define SIMULATOROBJ_H
+#ifndef SIMOBJ_H
+#define SIMOBJ_H
 
-//SimulatorObject.h
+//SimObj.h
 //
 //Header file for simulator object class
 //
@@ -11,7 +11,7 @@
 
 namespace FDSim
 {
-	class SimulatorObject
+	class SimObj
 	{
 	public:
 		uint64_t currentClockCycle;

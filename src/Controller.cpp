@@ -11,8 +11,8 @@ Controller::Controller(FlashDIMM* parent){
 
 	channelXferCyclesLeft= vector<uint>(NUM_PACKAGES, 0);
 
-	channelQueues= vector<queue <BusPacket *> >(NUM_PACKAGES, queue<BusPacket *>());
-	outgoingPackets= vector<BusPacket *>(NUM_PACKAGES, NULL);
+	channelQueues= vector<queue <ChannelPacket *> >(NUM_PACKAGES, queue<ChannelPacket *>());
+	outgoingPackets= vector<ChannelPacket *>(NUM_PACKAGES, NULL);
 
 	currentClockCycle= 0;
 }
@@ -21,20 +21,20 @@ void Controller::attachPackages(vector<Package> *packages){
 	this->packages= packages;
 }
 
-bool Controller::addTransaction(Transaction &trans){
+bool Controller::addTransaction(FlashTransaction &trans){
 	trans.timeAdded= currentClockCycle;
 	transactionQueue.push(trans);
 	return true;
 }
 
-void Controller::returnReadData(const Transaction  &trans){
+void Controller::returnReadData(const FlashTransaction  &trans){
 	if(parentFlashDIMM->ReturnReadData!=NULL){
 		(*parentFlashDIMM->ReturnReadData)(parentFlashDIMM->systemID, trans.address, currentClockCycle);
 	}
 }
 
-void Controller::receiveFromChannel(BusPacket *busPacket){
-	returnTransaction.push_back(Transaction(RETURN_DATA, busPacket->physicalAddress, busPacket->data));
+void Controller::receiveFromChannel(ChannelPacket *busPacket){
+	returnTransaction.push_back(FlashTransaction(RETURN_DATA, busPacket->physicalAddress, busPacket->data));
 	delete(busPacket);
 }
 
@@ -77,14 +77,14 @@ void Controller::update(void){
 		//transactionQueue.front().print();
 		switch (transactionQueue.front().transactionType){
 			case DATA_READ:{
-				BusPacket *readPacket= ftl.translate(READ, transactionQueue.front());
+				ChannelPacket *readPacket= ftl.translate(READ, transactionQueue.front());
 				channelQueues[readPacket->package].push(readPacket);
 				}
 				break;
 			case DATA_WRITE:
 				{
-				BusPacket *dataPacket= ftl.translate(DATA, transactionQueue.front());
-				BusPacket *writePacket= new BusPacket(WRITE, dataPacket->physicalAddress, dataPacket->page, dataPacket->block, dataPacket->plane, dataPacket->die, dataPacket->package, dataPacket->data); 
+				ChannelPacket *dataPacket= ftl.translate(DATA, transactionQueue.front());
+				ChannelPacket *writePacket= new ChannelPacket(WRITE, dataPacket->physicalAddress, dataPacket->page, dataPacket->block, dataPacket->plane, dataPacket->die, dataPacket->package, dataPacket->data); 
 				channelQueues[writePacket->package].push(dataPacket);
 				channelQueues[writePacket->package].push(writePacket);
 				}

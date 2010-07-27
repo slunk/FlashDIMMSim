@@ -2,7 +2,7 @@
 //Class file for flash fimm system wrapper
 
 #include "FlashDIMM.h"
-#include "IniReader.h"
+#include "Init.h"
 
 using namespace FDSim;
 using namespace std;
@@ -11,7 +11,7 @@ FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
 	uint i, j;
 	
 	//get device parameters
-	IniReader::ReadIniFile(dev, false);
+	Init::ReadIniFile(dev, false);
 	
 	PRINT("\nDevice Information:\n");
 	PRINT("Size (GB): "<<TOTAL_SIZE/(1024*1024));
@@ -51,7 +51,7 @@ FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
 	currentClockCycle= 0;
 }
 
-bool FlashDIMM::add(Transaction &trans){
+bool FlashDIMM::add(FlashTransaction &trans){
 	controller->addTransaction(trans);
 	return true;
 }

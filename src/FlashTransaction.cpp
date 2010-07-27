@@ -1,24 +1,24 @@
-//Transaction.cpp
+//FlashTransaction.cpp
 //
 //Class file for transaction object
-//	Transaction is considered requests sent from the CPU to 
+//	FlashTransaction is considered requests sent from the CPU to 
 //	the memory controller (read, write, etc.)...
 
-#include "Transaction.h"
+#include "FlashTransaction.h"
 
 using namespace FDSim;
 using namespace std;
 
-Transaction::Transaction(){}
+FlashTransaction::FlashTransaction(){}
 
-Transaction::Transaction(TransactionType transType, uint64_t addr, void *dat)
+FlashTransaction::FlashTransaction(TransactionType transType, uint64_t addr, void *dat)
 {
 	transactionType = transType;
 	address = addr;
 	data = dat;
 }
 
-void Transaction::print()
+void FlashTransaction::print()
 {
 	if(transactionType == DATA_READ)
 		{

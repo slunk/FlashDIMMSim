@@ -1,11 +1,11 @@
 #ifndef TRANSACTION_H
 #define TRANSACTION_H
 
-//Transaction.h
+//FlashTransaction.h
 //
 //Header file for transaction object
 
-#include "SystemConfiguration.h"
+#include "FlashConfiguration.h"
 
 using namespace std;
 
@@ -18,7 +18,7 @@ namespace FDSim
 		RETURN_DATA
 	};
 
-	class Transaction
+	class FlashTransaction
 	{
 	public:
 		//fields
@@ -30,8 +30,8 @@ namespace FDSim
 
 		
 		//functions
-		Transaction(TransactionType transType, uint64_t addr, void *data);
-		Transaction();
+		FlashTransaction(TransactionType transType, uint64_t addr, void *data);
+		FlashTransaction();
 		
 		void print();
 	};

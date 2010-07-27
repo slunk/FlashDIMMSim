@@ -1,11 +1,11 @@
-#ifndef INIREADER_H
-#define INIREADER_H
+#ifndef INIT_H
+#define INIT_H
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "SystemConfiguration.h"
+#include "FlashConfiguration.h"
 
 using namespace std;
 
@@ -31,7 +31,7 @@ namespace FDSim
 		bool wasSet; 
 	} ConfigMap;
 
-	class IniReader 
+	class Init 
 	{		
 		public:
 			static void SetKey(string key, string value, bool isSystemParam = false, size_t lineNumber = 0);

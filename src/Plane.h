@@ -3,21 +3,21 @@
 //Plane.h
 //header file for the Plane class
 
-#include "SystemConfiguration.h"
+#include "FlashConfiguration.h"
 #include "Block.h"
-#include "BusPacket.h"
+#include "ChannelPacket.h"
 
 namespace FDSim{
 	class Plane{
 		public:
 			Plane(void);
-			void read(BusPacket *busPacket);
-			void write(BusPacket *busPacket);
-			void erase(BusPacket *busPacket);
-			void storeInData(BusPacket *busPacket); 
-			BusPacket *readFromData(void);
+			void read(ChannelPacket *busPacket);
+			void write(ChannelPacket *busPacket);
+			void erase(ChannelPacket *busPacket);
+			void storeInData(ChannelPacket *busPacket); 
+			ChannelPacket *readFromData(void);
 		private:
-			BusPacket *dataReg, *cacheReg;
+			ChannelPacket *dataReg, *cacheReg;
 			std::map<uint, Block> blocks;
 	};
 }

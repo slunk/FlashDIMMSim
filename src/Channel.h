@@ -3,9 +3,9 @@
 //Channel.h
 //header file for the Package class
 
-#include "SystemConfiguration.h"
+#include "FlashConfiguration.h"
 #include "Die.h"
-#include "BusPacket.h"
+#include "ChannelPacket.h"
 
 namespace FDSim{
 	typedef enum{
@@ -22,8 +22,8 @@ namespace FDSim{
 			int obtainChannel(uint sender);
 			int releaseChannel(uint sender);
 			int hasChannel(uint sender);
-			void sendToDie(uint die_num, BusPacket *busPacket);
-			void sendToController(BusPacket *busPacket);
+			void sendToDie(uint die_num, ChannelPacket *busPacket);
+			void sendToController(ChannelPacket *busPacket);
 			Controller *controller;
 		private:
 			ChannelStatus status;

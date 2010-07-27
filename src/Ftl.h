@@ -3,17 +3,17 @@
 //Ftl.h
 //header file for the ftl
 
-#include "SimulatorObject.h"
-#include "SystemConfiguration.h"
-#include "BusPacket.h"
-#include "Transaction.h"
+#include "SimObj.h"
+#include "FlashConfiguration.h"
+#include "ChannelPacket.h"
+#include "FlashTransaction.h"
 
 namespace FDSim{
 	class Controller;
-	class Ftl : public SimulatorObject{
+	class Ftl : public SimObj{
 		public:
 			Ftl(void);
-			BusPacket *translate(BusPacketType type, Transaction &trans);
+			ChannelPacket *translate(ChannelPacketType type, FlashTransaction &trans);
 			void update(void);
 		private:
 			uint64_t writePointer;

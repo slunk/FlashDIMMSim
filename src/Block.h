@@ -3,7 +3,7 @@
 //Block.h
 //header file for the Block class
 
-#include "SystemConfiguration.h"
+#include "FlashConfiguration.h"
 
 namespace FDSim{
 	class Block{

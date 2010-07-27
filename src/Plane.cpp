@@ -12,24 +12,24 @@ Plane::Plane(void){
 	cacheReg= NULL;
 }
 
-void Plane::read(BusPacket *busPacket){
+void Plane::read(ChannelPacket *busPacket){
 	if (blocks.find(busPacket->block) != blocks.end()){
 		busPacket->data= blocks[busPacket->block].read(busPacket->page);
 		busPacket->busPacketType= DATA;
 		dataReg= busPacket;
 	} else{
 		ERROR("Invalid read: Block "<<busPacket->block<<" hasn't been written to");
-		dataReg= new BusPacket();//garbage packet... might be better to set values
+		dataReg= new ChannelPacket();//garbage packet... might be better to set values
 	}
 }
 
-void Plane::write(BusPacket *busPacket){
+void Plane::write(ChannelPacket *busPacket){
 	if (blocks.find(busPacket->block) == blocks.end())
 		blocks[busPacket->block] = Block(busPacket->block);
 	blocks[busPacket->block].write(busPacket->page, dataReg->data);
 }
 
-void Plane::erase(BusPacket *busPacket){
+void Plane::erase(ChannelPacket *busPacket){
 	if (blocks.find(busPacket->block) != blocks.end()){
 		blocks[busPacket->block].erase();
 		blocks.erase(busPacket->block);
@@ -37,10 +37,10 @@ void Plane::erase(BusPacket *busPacket){
 }
 
 
-void Plane::storeInData(BusPacket *busPacket){
+void Plane::storeInData(ChannelPacket *busPacket){
 	dataReg= busPacket;
 }
 
-BusPacket *Plane::readFromData(void){
+ChannelPacket *Plane::readFromData(void){
 	return dataReg;
 }

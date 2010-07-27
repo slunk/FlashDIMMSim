@@ -2,7 +2,7 @@
 //class file for channel class
 //no contention modeled yet
 #include "Channel.h"
-#include "BusPacket.h"
+#include "ChannelPacket.h"
 #include "Controller.h"
 
 using namespace FDSim;
@@ -29,10 +29,10 @@ int Channel::hasChannel(uint sender){
 	return 1;
 }
 
-void Channel::sendToDie(uint die_num, BusPacket *busPacket){
+void Channel::sendToDie(uint die_num, ChannelPacket *busPacket){
 	dies[die_num]->receiveFromChannel(busPacket);
 }
 
-void Channel::sendToController(BusPacket *busPacket){
+void Channel::sendToController(ChannelPacket *busPacket){
 	controller->receiveFromChannel(busPacket);
 }
