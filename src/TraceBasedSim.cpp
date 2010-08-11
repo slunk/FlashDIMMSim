@@ -15,7 +15,7 @@
 #include <time.h>
 
 #define NUM_WRITES 100
-#define SIM_CYCLES 100000
+#define SIM_CYCLES 100000000
 
 /*temporary assignments for externed variables.
  * This should really be done with another class
@@ -48,7 +48,7 @@ int main(void){
 	FlashDIMM *flashDimm= new FlashDIMM(0,"ini/samsung_K9XXG08UXM.ini","ini/def_system.ini","","");
 	FlashTransaction t;
 
-	for (write= 0; write<NUM_WRITES; write++){
+	for (write= 0; write<TOTAL_SIZE/PAGE_SIZE; write++){
 		t= FlashTransaction(DATA_WRITE, write*4, (void *)0xdeadbeef);
 		(*flashDimm).add(t);
 	}
@@ -59,7 +59,7 @@ int main(void){
 			t= FlashTransaction(DATA_READ, cycle*4, (void *)0xfeedface);
 			(*flashDimm).add(t);
 		}*/
-		if (flashDimm->numWrites == NUM_WRITES)
+		if (flashDimm->numWrites == TOTAL_SIZE/PAGE_SIZE)
 			break;
 	}
 
