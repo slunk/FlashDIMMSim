@@ -16,6 +16,7 @@ namespace FDSim{
 			ChannelPacket *translate(ChannelPacketType type, FlashTransaction &trans);
 			void update(void);
 		private:
+			uint offset, pageBitWidth, blockBitWidth, planeBitWidth, dieBitWidth, packageBitWidth;
 			uint64_t writePointer;
 			std::map<uint64_t,uint64_t> addressMap;
 	};

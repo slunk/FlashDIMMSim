@@ -48,8 +48,8 @@ int main(void){
 	FlashDIMM *flashDimm= new FlashDIMM(0,"ini/samsung_K9XXG08UXM.ini","ini/def_system.ini","","");
 	FlashTransaction t;
 
-	for (write= 0; write<TOTAL_SIZE/PAGE_SIZE; write++){
-		t= FlashTransaction(DATA_WRITE, write*4, (void *)0xdeadbeef);
+	for (write= 0; write<NUM_WRITES*64; write+=64){
+		t= FlashTransaction(DATA_WRITE, write, (void *)0xdeadbeef);
 		(*flashDimm).add(t);
 	}
 
@@ -59,7 +59,7 @@ int main(void){
 			t= FlashTransaction(DATA_READ, cycle*4, (void *)0xfeedface);
 			(*flashDimm).add(t);
 		}*/
-		if (flashDimm->numWrites == TOTAL_SIZE/PAGE_SIZE)
+		if (flashDimm->numWrites == NUM_WRITES)
 			break;
 	}
 
