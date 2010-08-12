@@ -22,7 +22,7 @@ ChannelPacket *Ftl::translate(ChannelPacketType type, FlashTransaction &trans){
 	uint package, die, plane, block, page;
 	uint64_t tempA, tempB, physicalAddress= trans.address;
 
-	if (trans.address > TOTAL_SIZE - 1 || trans.address < 0){
+	if (trans.address > TOTAL_SIZE*1024 - 1 || trans.address < 0){
 		ERROR("Inavlid address in Ftl");
 		exit(1);
 	}
