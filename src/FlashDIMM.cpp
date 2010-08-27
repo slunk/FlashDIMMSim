@@ -10,8 +10,26 @@ using namespace std;
 FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
 	uint i, j;
 	
-	//get device parameters
+	 if (pwd.length() > 0)
+	 {
+		 //ignore the pwd argument if the argument is an absolute path
+		 if (dev[0] != '/')
+		 {
+		 dev = pwd + "/" + dev;
+		 }
+		 
+		if (sys[0] != '/')
+		 {
+		 sys= pwd + "/" + sys;
+		 }
+	}
 	Init::ReadIniFile(dev, false);
+	//Init::ReadIniFile(sys, true);
+
+	 if (!Init::CheckIfAllSet())
+	 {
+		 exit(-1);
+	 }
 	
 	PRINT("\nDevice Information:\n");
 	PRINT("Size (GB): "<<TOTAL_SIZE/(1024*1024));
@@ -26,19 +44,20 @@ FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
 	PRINT("");
 
 	controller= new Controller(this);
-	packages= new vector<Package>();
-	Die *die;
+	packages= new vector<Package>(NUM_PACKAGES);
 
 	for (i= 0; i < NUM_PACKAGES; i++){
 		Package pack;
 		pack.channel= new Channel();
 		pack.channel->attachController(controller);
 		for (j= 0; j < DIES_PER_PACKAGE; j++){
-			die= new Die(this);
+			Die *die= new Die(this);
 			die->attachToChannel(pack.channel);
+			pack.channel->attachDie(die);
 			pack.dies.push_back(die);
 		}
 		packages->push_back(pack);
+		cout<<i<<endl;
 	}
 	controller->attachPackages(packages);
 	
@@ -75,7 +94,7 @@ void FlashDIMM::printStats(void){
 void FlashDIMM::update(void){
 	uint i, j;
 	Package package;
-
+	
 	for (i= 0; i < packages->size(); i++){
 		package= (*packages)[i];
 		for (j= 0; j < package.dies.size() ; j++){
@@ -83,6 +102,7 @@ void FlashDIMM::update(void){
 			package.dies[j]->step();
 		}
 	}
+		
 	controller->update();
 	controller->step();
 
