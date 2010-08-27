@@ -44,7 +44,7 @@ FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
 	PRINT("");
 
 	controller= new Controller(this);
-	packages= new vector<Package>(NUM_PACKAGES);
+	packages= new vector<Package>();
 
 	for (i= 0; i < NUM_PACKAGES; i++){
 		Package pack;
