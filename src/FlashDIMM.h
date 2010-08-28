@@ -31,8 +31,8 @@ namespace FDSim{
 			Callback_t* WriteDataDone;
 
 			uint systemID, numReads, numWrites, numErases;
-			Package p;
 		private:
+			string fuck, you;
 	};
 }
 #endif

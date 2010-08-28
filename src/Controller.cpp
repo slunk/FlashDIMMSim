@@ -23,7 +23,7 @@ void Controller::attachPackages(vector<Package> *packages){
 
 bool Controller::addTransaction(FlashTransaction &trans){
 	trans.timeAdded= currentClockCycle;
-	transactionQueue.push(trans);
+	transactionQueue.push_back(trans);
 	return true;
 }
 
@@ -94,7 +94,7 @@ void Controller::update(void){
 				exit(1);
 				break;
 		}
-		transactionQueue.pop();
+		transactionQueue.erase(transactionQueue.begin());
 	}
 	
 	//See if any read data is ready to return

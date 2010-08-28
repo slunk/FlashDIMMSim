@@ -45,7 +45,7 @@ using namespace std;
 int main(void){
 	clock_t start= clock(), end;
 	uint write, cycle;
-	FlashDIMM *flashDimm= new FlashDIMM(0,"ini/samsung_K9XXG08UXM.ini","ini/def_system.ini","","");
+	FlashDIMM *flashDimm= new FlashDIMM(1,"ini/samsung_K9XXG08UXM.ini","ini/def_system.ini","","");
 	FlashTransaction t;
 
 	for (write= 0; write<NUM_WRITES*64; write+=64){

@@ -7,10 +7,13 @@
 using namespace FDSim;
 using namespace std;
 
-FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
+FlashDIMM::FlashDIMM(uint id, string deviceFile, string sysFile, string pwd, string trc)
+	{
+	string dev = deviceFile, sys = sysFile, cDirectory = pwd;
 	uint i, j;
+	systemID = id;
 	
-	 if (pwd.length() > 0)
+	 if (cDirectory.length() > 0)
 	 {
 		 //ignore the pwd argument if the argument is an absolute path
 		 if (dev[0] != '/')
@@ -20,7 +23,7 @@ FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
 		 
 		if (sys[0] != '/')
 		 {
-		 sys= pwd + "/" + sys;
+		 sys = pwd + "/" + sys;
 		 }
 	}
 	Init::ReadIniFile(dev, false);
@@ -47,8 +50,8 @@ FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
 	packages= new vector<Package>();
 
 	for (i= 0; i < NUM_PACKAGES; i++){
-		Package pack;
-		pack.channel= new Channel();
+		Package pack = {new Channel(), vector<Die *>()};
+		//pack.channel= new Channel();
 		pack.channel->attachController(controller);
 		for (j= 0; j < DIES_PER_PACKAGE; j++){
 			Die *die= new Die(this);
@@ -57,7 +60,6 @@ FlashDIMM::FlashDIMM(uint id, string dev, string sys, string pwd, string trc){
 			pack.dies.push_back(die);
 		}
 		packages->push_back(pack);
-		cout<<i<<endl;
 	}
 	controller->attachPackages(packages);
 	
@@ -85,8 +87,7 @@ string FlashDIMM::SetOutputFileName(string tracefilename){
 
 void FlashDIMM::RegisterCallbacks(Callback_t *readCB, Callback_t *writeCB){
 	ReturnReadData = readCB;
-	WriteDataDone = writeCB;
-}
+	WriteDataDone = writeCB; }
 
 void FlashDIMM::printStats(void){
 }

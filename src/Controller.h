@@ -28,10 +28,10 @@ namespace FDSim{
 			void receiveFromChannel(ChannelPacket *busPacket);
 			void update(void);
 			FlashDIMM *parentFlashDIMM;
+			std::list<FlashTransaction> transactionQueue;
 		private:
 
-			std::queue<FlashTransaction> transactionQueue;
-			std::vector<FlashTransaction> returnTransaction;
+			std::list<FlashTransaction> returnTransaction;
 
 			Ftl ftl;
 			std::vector<Package> *packages;
