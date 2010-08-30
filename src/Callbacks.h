@@ -1,6 +1,6 @@
 
-#ifndef CALLBACK_H
-#define CALLBACK_H
+#ifndef FDSIMCALLBACK_H
+#define FDSIMCALLBACK_H
 
 namespace FDSim {
 

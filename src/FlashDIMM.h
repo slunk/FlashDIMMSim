@@ -10,6 +10,8 @@
 #include "FlashTransaction.h"
 #include "Callbacks.h"
 
+using std::string;
+
 namespace FDSim{
 	typedef CallbackBase<void,uint,uint64_t,uint64_t> Callback_t;
 	class FlashDIMM : public SimObj{
@@ -32,7 +34,7 @@ namespace FDSim{
 
 			uint systemID, numReads, numWrites, numErases;
 		private:
-			string fuck, you;
+			string dev, sys, cDirectory;
 	};
 }
 #endif

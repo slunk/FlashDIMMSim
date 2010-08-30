@@ -1,5 +1,5 @@
-#ifndef BUSPACKET_H
-#define BUSPACKET_H
+#ifndef CHANNELPACKET_H
+#define CHANNELPACKET_H
 //ChannelPacket.h
 //
 //Header file for bus packet object

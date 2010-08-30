@@ -7,9 +7,11 @@
 using namespace FDSim;
 using namespace std;
 
-FlashDIMM::FlashDIMM(uint id, string deviceFile, string sysFile, string pwd, string trc)
+FlashDIMM::FlashDIMM(uint id, string deviceFile, string sysFile, string pwd, string trc) :
+	dev(deviceFile),
+	sys(sysFile),
+	cDirectory(pwd)
 	{
-	string dev = deviceFile, sys = sysFile, cDirectory = pwd;
 	uint i, j;
 	systemID = id;
 	
@@ -37,7 +39,7 @@ FlashDIMM::FlashDIMM(uint id, string deviceFile, string sysFile, string pwd, str
 	PRINT("\nDevice Information:\n");
 	PRINT("Size (GB): "<<TOTAL_SIZE/(1024*1024));
 	PRINT("Packages/Channels: "<<NUM_PACKAGES);
-	PRINT("Page size (KB): "<<PAGE_SIZE);
+	PRINT("Page size (KB): "<<FLASH_PAGE_SIZE);
 	PRINT("\nTiming Info:\n");
 	PRINT("Read time: "<<READ_TIME);
 	PRINT("Write Time: "<<WRITE_TIME);

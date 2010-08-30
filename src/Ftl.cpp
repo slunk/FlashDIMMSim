@@ -9,7 +9,7 @@ using namespace FDSim;
 using namespace std;
 
 Ftl::Ftl(void){
-	offset = log2(PAGE_SIZE * 1024);
+	offset = log2(FLASH_PAGE_SIZE * 1024);
 	pageBitWidth = log2(PAGES_PER_BLOCK);
 	blockBitWidth = log2(BLOCKS_PER_PLANE);
 	planeBitWidth = log2(PLANES_PER_DIE);

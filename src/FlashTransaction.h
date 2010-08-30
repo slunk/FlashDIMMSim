@@ -1,5 +1,5 @@
-#ifndef TRANSACTION_H
-#define TRANSACTION_H
+#ifndef FDSIMTRANSACTION_H
+#define FDSIMTRANSACTION_H
 
 //FlashTransaction.h
 //
