@@ -73,7 +73,7 @@ void Controller::update(void){
 
 	//Look for new transactions. If there are any, translate their address, make buspackets, and place in appropriate channel queue
 	//Everything past his point will probably need some drasic changes in future iterations
-	while (transactionQueue.size() > 0){//This is probably a terrible way to do this
+	while (!transactionQueue.empty()){//This is probably a terrible way to do this
 		//transactionQueue.front().print();
 		switch (transactionQueue.front().transactionType){
 			case DATA_READ:{
