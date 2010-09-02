@@ -14,7 +14,7 @@ Block::Block(){}
 
 void *Block::read(uint page_num){
 	if (page_data.find(page_num) == page_data.end()){
-		ERROR("Request to read page "<<page_num<<" failed: nothing has been written to that address");
+		DEBUG("Request to read page "<<page_num<<" failed: nothing has been written to that address");
 		return (void *)0x0;
 	} else{
 		return page_data[page_num];
