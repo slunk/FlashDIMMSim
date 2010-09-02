@@ -28,14 +28,27 @@ void Die::attachToChannel(Channel *chan){
 }
 
 void Die::receiveFromChannel(ChannelPacket *busPacket){
-	if (busPacket->busPacketType == DATA){
-		planes[busPacket->plane].storeInData(busPacket);
-	} else if (currentCommand == NULL) {
-		commands.push(busPacket);
-	} else{
-		ERROR("Die is busy\n");
-		exit(1);
-	}
+	 if (busPacket->busPacketType == DATA){
+		 planes[busPacket->plane].storeInData(busPacket);
+	 } else if (currentCommand == NULL) {
+		 currentCommand = busPacket;
+		 switch (currentCommand->busPacketType){
+			 case READ:
+				 controlCyclesLeft= READ_TIME;
+				 break;
+			 case WRITE:
+				 controlCyclesLeft= WRITE_TIME;
+				 break;
+			 case ERASE:
+				 controlCyclesLeft= ERASE_TIME;
+				 break;
+			 default:
+				 break;
+		 }
+	 } else{
+		 ERROR("Die is busy");
+		 exit(1);
+	 }
 }
 
 int Die::isPlaneBusy(ChannelPacket *busPacket){
@@ -50,55 +63,35 @@ int Die::isPlaneBusy(ChannelPacket *busPacket){
 }
 
 void Die::update(void){
-	if (currentCommand != NULL){
-		if (controlCyclesLeft == 0){
-			switch (currentCommand->busPacketType){
-				case READ:
-					planes[currentCommand->plane].read(currentCommand);
-					returnDataPackets.push(planes[currentCommand->plane].readFromData());
-					parentFlashDIMM->numReads++;
-					break;
-				case WRITE:
-					planes[currentCommand->plane].write(currentCommand);
-					parentFlashDIMM->numWrites++;
-					//call read callback
-					if (parentFlashDIMM->WriteDataDone != NULL){
-						(*parentFlashDIMM->WriteDataDone)(parentFlashDIMM->systemID, currentCommand->physicalAddress, currentClockCycle);
-					}
-					break;
-				case ERASE:
-					planes[currentCommand->plane].erase(currentCommand);
-					parentFlashDIMM->numErases++;
-					break;
-				default:
-					break;
-			}
-			
-			//sim output
-			currentCommand->print(currentClockCycle);
-			//delete(currentCommand);
-			currentCommand= NULL;
-		} 
-		controlCyclesLeft--;
-	} else{
-		if (!commands.empty()){
-			currentCommand= commands.front();
-			commands.pop();
-			switch (currentCommand->busPacketType){
-				case READ:
-					controlCyclesLeft= READ_TIME;
-					break;
-				case WRITE:
-					controlCyclesLeft= WRITE_TIME;
-					break;
-				case ERASE:
-					controlCyclesLeft= ERASE_TIME;
-					break;
-				default:
-					break;
-			}
-		}
-	}
+	 if (currentCommand != NULL){
+		 if (controlCyclesLeft == 0){
+			 switch (currentCommand->busPacketType){
+				 case READ:
+					 planes[currentCommand->plane].read(currentCommand);
+					 returnDataPackets.push(planes[currentCommand->plane].readFromData());
+					 parentFlashDIMM->numReads++;
+					 break;
+				 case WRITE:
+					 planes[currentCommand->plane].write(currentCommand);
+					 parentFlashDIMM->numWrites++;
+					 //call write callback
+					 if (parentFlashDIMM->WriteDataDone != NULL){
+						 (*parentFlashDIMM->WriteDataDone)(parentFlashDIMM->systemID, currentCommand->physicalAddress, currentClockCycle);
+					 }
+					 break;
+				 case ERASE:
+					 planes[currentCommand->plane].erase(currentCommand);
+					 parentFlashDIMM->numErases++;
+					 break;
+				 default:
+					 break;
+			 }
+			 //sim output
+			 //currentCommand->print(currentClockCycle);
+			 currentCommand= NULL;
+		 }
+		 controlCyclesLeft--;
+	 }
 
 	//using channel without contention for now
 	if (!returnDataPackets.empty()){
