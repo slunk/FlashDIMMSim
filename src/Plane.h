@@ -18,7 +18,7 @@ namespace FDSim{
 			ChannelPacket *readFromData(void);
 		private:
 			ChannelPacket *dataReg, *cacheReg;
-			std::map<uint, Block> blocks;
+			std::unordered_map<uint, Block> blocks;
 	};
 }
 #endif

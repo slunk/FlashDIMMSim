@@ -18,7 +18,7 @@ namespace FDSim{
 		private:
 			uint offset, pageBitWidth, blockBitWidth, planeBitWidth, dieBitWidth, packageBitWidth;
 			uint64_t writePointer;
-			std::map<uint64_t,uint64_t> addressMap;
+			std::unordered_map<uint64_t,uint64_t> addressMap;
 	};
 }
 #endif

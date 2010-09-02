@@ -15,7 +15,7 @@ namespace FDSim{
 			void erase(void);
 		private:
 			uint block_num;
-			std::map<uint, void *> page_data;
+			std::unordered_map<uint, void *> page_data;
 	};
 }
 #endif

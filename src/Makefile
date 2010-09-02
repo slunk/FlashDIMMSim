@@ -1,4 +1,4 @@
-CXXFLAGS= -O0 -DDEBUG_BUILD -DNO_STORAGE -Wall -pedantic
+CXXFLAGS= -O0 -DDEBUG_BUILD -DNO_STORAGE -Wall -pedantic -std=c++0x
 #CXXFLAGS= -O3 -DNO_OUTPUT -DNO_STORAGE -Wall
 
 
@@ -46,6 +46,6 @@ MBOBSim.o: TraceBasedSim.cpp
 	g++ ${CXXFLAGS} -DMBOB_SYSTEM -o $@ -c $<
 
 %.po : %.cpp
-	g++ -g -O3 -ffast-math -fPIC -DNO_OUTPUT -DNO_STORAGE -o $@ -c $<
+	g++ -std=c++0x -g -O3 -ffast-math -fPIC -DNO_OUTPUT -DNO_STORAGE -o $@ -c $<
 clean: 
 	rm -f ${REBUILDABLES} *.dep 
