@@ -18,7 +18,7 @@ uint ERASE_TIME;
 uint DATA_TIME;
 uint COMMAND_TIME;
 
-uint DEBUG_INI_READER= 0;
+uint DEBUG_INIT= 0;
 
 namespace FDSim 
 {
@@ -134,7 +134,7 @@ namespace FDSim
 							ERROR("could not parse line "<<lineNumber<<" (non-numeric value '"<<valueString<<"')?");
 						}
 						*((uint *)configMap[i].variablePtr) = intValue;
-						if (DEBUG_INI_READER)
+						if (DEBUG_INIT)
 						{
 							DEBUG("\t - SETTING "<<configMap[i].iniKey<<"="<<intValue);
 						}
@@ -145,7 +145,7 @@ namespace FDSim
 							ERROR("could not parse line "<<lineNumber<<" (non-numeric value '"<<valueString<<"')?");
 						}
 						*((uint64_t *)configMap[i].variablePtr) = int64Value;
-						if (DEBUG_INI_READER)
+						if (DEBUG_INIT)
 						{
 							DEBUG("\t - SETTING "<<configMap[i].iniKey<<"="<<int64Value);
 						}
@@ -156,14 +156,14 @@ namespace FDSim
 							ERROR("could not parse line "<<lineNumber<<" (non-numeric value '"<<valueString<<"')?");
 						}
 						*((float *)configMap[i].variablePtr) = floatValue;
-						if (DEBUG_INI_READER)
+						if (DEBUG_INIT)
 						{
 							DEBUG("\t - SETTING "<<configMap[i].iniKey<<"="<<floatValue);
 						}
 					break;
 					case STRING:
 						*((string *)configMap[i].variablePtr) = string(valueString);
-						if (DEBUG_INI_READER)
+						if (DEBUG_INIT)
 						{
 							DEBUG("\t - SETTING "<<configMap[i].iniKey<<"="<<valueString);
 						}
