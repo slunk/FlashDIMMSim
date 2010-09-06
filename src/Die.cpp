@@ -69,7 +69,6 @@ void Die::update(void){
 				 case READ:
 					 planes[currentCommand->plane].read(currentCommand);
 					 returnDataPackets.push(planes[currentCommand->plane].readFromData());
-					 parentFlashDIMM->numReads++;
 					 break;
 				 case WRITE:
 					 planes[currentCommand->plane].write(currentCommand);

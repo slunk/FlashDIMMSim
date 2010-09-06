@@ -31,6 +31,7 @@ void Controller::returnReadData(const FlashTransaction  &trans){
 	if(parentFlashDIMM->ReturnReadData!=NULL){
 		(*parentFlashDIMM->ReturnReadData)(parentFlashDIMM->systemID, trans.address, currentClockCycle);
 	}
+	parentFlashDIMM->numReads++;
 }
 
 void Controller::receiveFromChannel(ChannelPacket *busPacket){

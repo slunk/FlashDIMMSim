@@ -10,9 +10,9 @@
  */
 #include <iostream>
 #include "FlashConfiguration.h"
-#include "FlashDIMM.h"
 #include "FlashTransaction.h"
 #include <time.h>
+#include "TraceBasedSim.h"
 
 #define NUM_WRITES 100
 #define SIM_CYCLES 100000000
@@ -43,9 +43,27 @@ using namespace FDSim;
 using namespace std;
 
 int main(void){
+	test_obj t;
+	t.run_test();
+	return 0;
+}
+
+void test_obj::read_cb(uint id, uint64_t address, uint64_t cycle){
+	cout<<"[Callback] read complete: "<<id<<" "<<address<<" cycle="<<cycle<<endl;
+}
+
+void test_obj::write_cb(uint id, uint64_t address, uint64_t cycle){
+	cout<<"[Callback] write complete: "<<id<<" "<<address<<" cycle="<<cycle<<endl;
+}
+
+void test_obj::run_test(void){
 	clock_t start= clock(), end;
 	uint write, cycle;
 	FlashDIMM *flashDimm= new FlashDIMM(1,"ini/samsung_K9XXG08UXM.ini","ini/def_system.ini","","");
+	typedef CallbackBase<void,uint,uint64_t,uint64_t> Callback_t;
+	Callback_t *r = new Callback<test_obj, void, uint, uint64_t, uint64_t>(this, &test_obj::read_cb);
+	Callback_t *w = new Callback<test_obj, void, uint, uint64_t, uint64_t>(this, &test_obj::write_cb);
+	flashDimm->RegisterCallbacks(r, w);
 	FlashTransaction t;
 
 	for (write= 0; write<NUM_WRITES*64; write+=64){
@@ -55,11 +73,11 @@ int main(void){
 
 	for (cycle= 0; cycle<SIM_CYCLES; cycle++){
 		(*flashDimm).update();
-		/*if (cycle < NUM_WRITES){
-			t= FlashTransaction(DATA_READ, cycle*4, (void *)0xfeedface);
+		if (cycle < NUM_WRITES){
+			t= FlashTransaction(DATA_READ, cycle*64, (void *)0xfeedface);
 			(*flashDimm).add(t);
-		}*/
-		if (flashDimm->numWrites == NUM_WRITES)
+		}
+		if (flashDimm->numReads == NUM_WRITES)
 			break;
 	}
 
@@ -70,6 +88,4 @@ int main(void){
 	cout<<"Writes completed: "<<flashDimm->numWrites<<endl;
 	cout<<"Erases completed: "<<flashDimm->numErases<<endl;
 	cout<<"Execution time: "<<(end-start)<<" cycles. "<<(double)(end-start)/CLOCKS_PER_SEC<<" seconds.\n";
-
-	return 0;
 }
