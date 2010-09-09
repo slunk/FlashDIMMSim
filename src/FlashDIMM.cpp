@@ -75,12 +75,13 @@ FlashDIMM::FlashDIMM(uint id, string deviceFile, string sysFile, string pwd, str
 }
 
 bool FlashDIMM::add(FlashTransaction &trans){
-	controller->addTransaction(trans);
-	return true;
+	return controller->addTransaction(trans);
 }
 
 bool FlashDIMM::addTransaction(bool isWrite, uint64_t addr){
-	return true;
+	TransactionType type = isWrite ? DATA_WRITE : DATA_READ;
+	FlashTransaction trans = FlashTransaction(type, addr, NULL);
+	return controller->addTransaction(trans);
 }
 
 string FlashDIMM::SetOutputFileName(string tracefilename){
@@ -89,7 +90,8 @@ string FlashDIMM::SetOutputFileName(string tracefilename){
 
 void FlashDIMM::RegisterCallbacks(Callback_t *readCB, Callback_t *writeCB){
 	ReturnReadData = readCB;
-	WriteDataDone = writeCB; }
+	WriteDataDone = writeCB;
+}
 
 void FlashDIMM::printStats(void){
 }

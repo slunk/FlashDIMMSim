@@ -76,6 +76,7 @@ void Die::update(void){
 					 //call write callback
 					 if (parentFlashDIMM->WriteDataDone != NULL){
 						 (*parentFlashDIMM->WriteDataDone)(parentFlashDIMM->systemID, currentCommand->physicalAddress, currentClockCycle);
+
 					 }
 					 break;
 				 case ERASE:
