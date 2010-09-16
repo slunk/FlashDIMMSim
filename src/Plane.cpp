@@ -19,7 +19,7 @@ void Plane::read(ChannelPacket *busPacket){
 		dataReg= busPacket;
 	} else{
 		DEBUG("Invalid read: Block "<<busPacket->block<<" hasn't been written to");
-		dataReg= new ChannelPacket();//garbage packet... might be better to set values
+		dataReg= new ChannelPacket(DATA, busPacket->physicalAddress, busPacket->page, busPacket->block, busPacket->plane, busPacket->die, busPacket->package, NULL);//garbage packet... might be better to set values
 	}
 }
 
