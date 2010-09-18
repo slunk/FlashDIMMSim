@@ -8,7 +8,8 @@
 using namespace FDSim;
 
 Channel::Channel(void){
-	status = CHANNEL_BUSY;
+	sender = -1;
+}
 
 void Channel::attachDie(Die *d){
 	dies.push_back(d);
@@ -18,32 +19,31 @@ void Channel::attachController(Controller *c){
 	controller= c;
 }
 
-int Channel::obtainChannel(uint sender){
-	if (status == CHANNEL_FREE){
-		status = CHANNEL_BUSY;
-		owner = sender;
+int Channel::obtainChannel(uint s, SenderType t, uint r){
+	if (sender != -1 || (t == CONTROLLER && dies[r]->isDieBusy())){
+		return 0;
+	}
+	type = t;
+	sender = (int) s;
+	return 1;
+}
+
+int Channel::releaseChannel(SenderType t, uint s){
+	if (t == type && sender == (int) s){
+		sender = -1;
 		return 1;
 	}
 	return 0;
 }
 
-int Channel::releaseChannel(uint sender){
-	if (status == CHANNEL_BUSY and sender == owner){
-		status = CHANNEL_FREE;
-		return 1;
-	}
-	ERROR("Invalid attempt to release channel from "<<sender);
-	return 0;
-}
-
-int Channel::hasChannel(uint sender){
-	if (status == CHANNEL_BUSY and sender == owner)
+int Channel::hasChannel(SenderType t, uint s){
+	if (t == type && sender == (int) s)
 		return 1;
 	return 0;
 }
 
-void Channel::sendToDie(uint die_num, ChannelPacket *busPacket){
-	dies[die_num]->receiveFromChannel(busPacket);
+void Channel::sendToDie(ChannelPacket *busPacket){
+	dies[busPacket->die]->receiveFromChannel(busPacket);
 }
 
 void Channel::sendToController(ChannelPacket *busPacket){

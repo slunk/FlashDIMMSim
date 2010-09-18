@@ -15,12 +15,13 @@ namespace FDSim{
 	class FlashDIMM;
 	class Die : public SimObj{
 		public:
-			Die(FlashDIMM *parent);
+			Die(FlashDIMM *parent, uint id);
 			void attachToChannel(Channel *chan);
 			void receiveFromChannel(ChannelPacket *busPacket);
-			int isPlaneBusy(ChannelPacket *busPacket);
+			int isDieBusy(void);
 			void update(void);
 		private:
+			uint id;
 			FlashDIMM *parentFlashDIMM;
 			Channel *channel;
 			uint dataCyclesLeft;

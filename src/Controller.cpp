@@ -44,12 +44,12 @@ void Controller::update(void){
 	
 	//Check for commands/data on a channel. If there is, see if it is done on channel
 	for (i= 0; i < outgoingPackets.size(); i++){
-		if (outgoingPackets[i] != NULL && !(*packages)[outgoingPackets[i]->package].dies[outgoingPackets[i]->die]->isPlaneBusy(outgoingPackets[i])){
+		if (outgoingPackets[i] != NULL && (*packages)[outgoingPackets[i]->package].channel->hasChannel(CONTROLLER, 0)){
 
 			channelXferCyclesLeft[i]--;
 			if (channelXferCyclesLeft[i] == 0){
-				(*packages)[outgoingPackets[i]->package].dies[outgoingPackets[i]->die]->receiveFromChannel(outgoingPackets[i]);
-				//packages[outgoingPackets[i]->package].channel->releaseChannel();
+				(*packages)[outgoingPackets[i]->package].channel->sendToDie(outgoingPackets[i]);
+				(*packages)[outgoingPackets[i]->package].channel->releaseChannel(CONTROLLER, 0);
 				outgoingPackets[i]= NULL;
 			}
 		}
@@ -59,22 +59,23 @@ void Controller::update(void){
 	for (i= 0; i < channelQueues.size(); i++){
 		if (!channelQueues[i].empty() && outgoingPackets[i]==NULL){
 			//if we can get the channel (channel contention not implemented yet)
-			outgoingPackets[i]= channelQueues[i].front();
-			channelQueues[i].pop();
-			switch (outgoingPackets[i]->busPacketType){
-				case DATA:
-					channelXferCyclesLeft[i]= DATA_TIME;
-					break;
-				default:
-					channelXferCyclesLeft[i]= COMMAND_TIME;
-					break;
+			if ((*packages)[i].channel->obtainChannel(0, CONTROLLER, channelQueues[i].front()->die)){
+				outgoingPackets[i]= channelQueues[i].front();
+				channelQueues[i].pop();
+				switch (outgoingPackets[i]->busPacketType){
+					case DATA:
+						channelXferCyclesLeft[i]= DATA_TIME;
+						break;
+					default:
+						channelXferCyclesLeft[i]= COMMAND_TIME;
+						break;
+				}
 			}
 		}
 	}
 
 	//Look for new transactions. If there are any, translate their address, make buspackets, and place in appropriate channel queue
-	//Everything past his point will probably need some drasic changes in future iterations
-	while (!transactionQueue.empty()){//This is probably a terrible way to do this
+	while (!transactionQueue.empty()){
 		//transactionQueue.front().print();
 		switch (transactionQueue.front().transactionType){
 			case DATA_READ:{

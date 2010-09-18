@@ -56,7 +56,7 @@ FlashDIMM::FlashDIMM(uint id, string deviceFile, string sysFile, string pwd, str
 		//pack.channel= new Channel();
 		pack.channel->attachController(controller);
 		for (j= 0; j < DIES_PER_PACKAGE; j++){
-			Die *die= new Die(this);
+			Die *die= new Die(this, j);
 			die->attachToChannel(pack.channel);
 			pack.channel->attachDie(die);
 			pack.dies.push_back(die);

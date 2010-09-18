@@ -8,26 +8,26 @@
 #include "ChannelPacket.h"
 
 namespace FDSim{
-	typedef enum{
-		CHANNEL_FREE,
-		CHANNEL_BUSY
-	} ChannelStatus;
-	
+	enum SenderType{
+		CONTROLLER,
+		DIE
+	};
+
 	class Controller;
 	class Channel{
 		public:
 			Channel(void);
 			void attachDie(Die *d);
 			void attachController(Controller *c);
-			int obtainChannel(uint sender);
-			int releaseChannel(uint sender);
-			int hasChannel(uint sender);
-			void sendToDie(uint die_num, ChannelPacket *busPacket);
+			int obtainChannel(uint s, SenderType t, uint r);
+			int releaseChannel(SenderType t, uint s);
+			int hasChannel(SenderType, uint s);
+			void sendToDie(ChannelPacket *busPacket);
 			void sendToController(ChannelPacket *busPacket);
 			Controller *controller;
 		private:
-			ChannelStatus status;
-			uint owner;
+			SenderType type;
+			int sender;
 			std::vector<Die *> dies;
 	};
 }

@@ -9,7 +9,8 @@
 using namespace FDSim;
 using namespace std;
 
-Die::Die(FlashDIMM *parent){
+Die::Die(FlashDIMM *parent, uint idNum){
+	id = idNum;
 	parentFlashDIMM= parent;
 
 	planes= vector<Plane>(PLANES_PER_DIE, Plane());
@@ -51,11 +52,7 @@ void Die::receiveFromChannel(ChannelPacket *busPacket){
 	 }
 }
 
-int Die::isPlaneBusy(ChannelPacket *busPacket){
-	//not actually if a single plane is busy (tests if die is busy).
-	//only one command gets executed by a die at a time
-	//If concurrency between planes gets added (which may be necessary)
-	//this function will have to change along with a lot of other stuff...
+int Die::isDieBusy(void){
 	if (currentCommand == NULL){
 		return 0;
 	}
@@ -95,14 +92,15 @@ void Die::update(void){
 
 	//using channel without contention for now
 	if (!returnDataPackets.empty()){
-		//return the data
-		if (dataCyclesLeft == 0){
-			channel->sendToController(returnDataPackets.front());
-			returnDataPackets.pop();
-			if (!returnDataPackets.empty())
-				if (channel->obtainChannel(0));
-					dataCyclesLeft= DATA_TIME;
-		}
-		dataCyclesLeft--;
+		if (channel->hasChannel(DIE, id)){
+			if (dataCyclesLeft == 0){
+				channel->sendToController(returnDataPackets.front());
+				channel->releaseChannel(DIE, id);
+				returnDataPackets.pop();
+			}
+			dataCyclesLeft--;
+		} else
+			if (channel->obtainChannel(id, DIE, 0))
+				dataCyclesLeft= DATA_TIME;
 	}
 }
