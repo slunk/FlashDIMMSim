@@ -11,8 +11,8 @@
 #include <unordered_map>
 #include <queue>
 #include <list>
-
 #include <stdint.h>
+#include <limits.h>
 
 //sloppily reusing #defines from dramsim
 #ifndef ERROR

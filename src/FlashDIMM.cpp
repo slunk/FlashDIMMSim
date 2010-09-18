@@ -51,6 +51,11 @@ FlashDIMM::FlashDIMM(uint id, string deviceFile, string sysFile, string pwd, str
 	controller= new Controller(this);
 	packages= new vector<Package>();
 
+	if (DIES_PER_PACKAGE > INT_MAX){
+		ERROR("Too many dies.");
+		exit(1);
+	}
+
 	for (i= 0; i < NUM_PACKAGES; i++){
 		Package pack = {new Channel(), vector<Die *>()};
 		//pack.channel= new Channel();
