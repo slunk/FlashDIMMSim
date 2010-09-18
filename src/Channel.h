@@ -27,7 +27,7 @@ namespace FDSim{
 			Controller *controller;
 		private:
 			ChannelStatus status;
-			uint sender;
+			uint owner;
 			std::vector<Die *> dies;
 	};
 }
