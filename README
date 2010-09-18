@@ -8,12 +8,12 @@ Getting started:
 
 		cd src
 		make
-		./SSDSim
+		./FDSim
 
 	To create a shared library:
 
 		cd src
-		make libssdsim.so
+		make libfdsim.so
 
 Questions?
 	Contact me at <slunk at umd dot edu>

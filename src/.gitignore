@@ -1,0 +1,6 @@
+*.o
+*.po
+*.dep
+*.swp
+FDSim
+libfdsim.so
