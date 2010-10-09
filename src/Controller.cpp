@@ -59,7 +59,7 @@ void Controller::update(void){
 	for (i= 0; i < channelQueues.size(); i++){
 		if (!channelQueues[i].empty() && outgoingPackets[i]==NULL){
 			//if we can get the channel (channel contention not implemented yet)
-			if ((*packages)[i].channel->obtainChannel(0, CONTROLLER, channelQueues[i].front()->die)){
+			if ((*packages)[i].channel->obtainChannel(0, CONTROLLER, channelQueues[i].front())){
 				outgoingPackets[i]= channelQueues[i].front();
 				channelQueues[i].pop();
 				switch (outgoingPackets[i]->busPacketType){

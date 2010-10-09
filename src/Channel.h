@@ -19,7 +19,7 @@ namespace FDSim{
 			Channel(void);
 			void attachDie(Die *d);
 			void attachController(Controller *c);
-			int obtainChannel(uint s, SenderType t, uint r);
+			int obtainChannel(uint s, SenderType t, ChannelPacket *p);
 			int releaseChannel(SenderType t, uint s);
 			int hasChannel(SenderType, uint s);
 			void sendToDie(ChannelPacket *busPacket);

@@ -18,21 +18,22 @@ namespace FDSim{
 			Die(FlashDIMM *parent, uint id);
 			void attachToChannel(Channel *chan);
 			void receiveFromChannel(ChannelPacket *busPacket);
-			int isDieBusy(void);
+			int isDieBusy(uint plane);
 			void update(void);
 		private:
 			uint id;
 			FlashDIMM *parentFlashDIMM;
 			Channel *channel;
 			uint dataCyclesLeft;
-			//std::vector<uint> controlCyclesLeft;//since separate planes can theoretically read, write, and erase at the same time
 			std::queue<ChannelPacket *> returnDataPackets;
 			std::vector<Plane> planes;
-			ChannelPacket *currentCommand;
+			//ChannelPacket *currentCommand;
+			std::vector<ChannelPacket *> currentCommands;
+			std::vector<uint> controlCyclesLeft;
 
 			//for first implementation without contention
-			std::queue<ChannelPacket *> commands;
-			uint controlCyclesLeft;
+			//std::queue<ChannelPacket *> commands;
+			//uint controlCyclesLeft;
 	};
 }
 #endif

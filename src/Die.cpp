@@ -15,10 +15,10 @@ Die::Die(FlashDIMM *parent, uint idNum){
 
 	planes= vector<Plane>(PLANES_PER_DIE, Plane());
 
-	currentCommand= NULL;
+	currentCommands= vector<ChannelPacket *>(PLANES_PER_DIE, NULL);
 
 	dataCyclesLeft= 0;
-	controlCyclesLeft= 0;
+	controlCyclesLeft= vector<uint>(PLANES_PER_DIE, 0);
 
 	currentClockCycle= 0;
 
@@ -31,17 +31,17 @@ void Die::attachToChannel(Channel *chan){
 void Die::receiveFromChannel(ChannelPacket *busPacket){
 	 if (busPacket->busPacketType == DATA){
 		 planes[busPacket->plane].storeInData(busPacket);
-	 } else if (currentCommand == NULL) {
-		 currentCommand = busPacket;
-		 switch (currentCommand->busPacketType){
+	 } else if (currentCommands[busPacket->plane] == NULL) {
+		 currentCommands[busPacket->plane] = busPacket;
+		 switch (busPacket->busPacketType){
 			 case READ:
-				 controlCyclesLeft= READ_TIME;
+				 controlCyclesLeft[busPacket->plane]= READ_TIME;
 				 break;
 			 case WRITE:
-				 controlCyclesLeft= WRITE_TIME;
+				 controlCyclesLeft[busPacket->plane]= WRITE_TIME;
 				 break;
 			 case ERASE:
-				 controlCyclesLeft= ERASE_TIME;
+				 controlCyclesLeft[busPacket->plane]= ERASE_TIME;
 				 break;
 			 default:
 				 break;
@@ -52,16 +52,21 @@ void Die::receiveFromChannel(ChannelPacket *busPacket){
 	 }
 }
 
-int Die::isDieBusy(void){
-	if (currentCommand == NULL){
+int Die::isDieBusy(uint plane){
+	if (currentCommands[plane] == NULL){
 		return 0;
 	}
 	return 1;
 }
 
 void Die::update(void){
+	uint i;
+	ChannelPacket *currentCommand;
+
+	for (i = 0 ; i < PLANES_PER_DIE ; i++){
+		currentCommand = currentCommands[i];
 	 if (currentCommand != NULL){
-		 if (controlCyclesLeft == 0){
+		 if (controlCyclesLeft[i] == 0){
 			 switch (currentCommand->busPacketType){
 				 case READ:
 					 planes[currentCommand->plane].read(currentCommand);
@@ -85,10 +90,11 @@ void Die::update(void){
 			 }
 			 //sim output
 			 //currentCommand->print(currentClockCycle);
-			 currentCommand= NULL;
+			 currentCommands[i]= NULL;
 		 }
-		 controlCyclesLeft--;
+		 controlCyclesLeft[i]--;
 	 }
+	}
 
 	//using channel without contention for now
 	if (!returnDataPackets.empty()){
@@ -100,7 +106,7 @@ void Die::update(void){
 			}
 			dataCyclesLeft--;
 		} else
-			if (channel->obtainChannel(id, DIE, 0))
+			if (channel->obtainChannel(id, DIE, NULL))
 				dataCyclesLeft= DATA_TIME;
 	}
 }
