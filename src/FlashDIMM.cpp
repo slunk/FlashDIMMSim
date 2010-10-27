@@ -69,6 +69,7 @@ FlashDIMM::FlashDIMM(uint id, string deviceFile, string sysFile, string pwd, str
 		packages->push_back(pack);
 	}
 	controller->attachPackages(packages);
+	ftl = new Ftl(controller);
 	
 	ReturnReadData= NULL;
 	WriteDataDone= NULL;
@@ -80,7 +81,7 @@ FlashDIMM::FlashDIMM(uint id, string deviceFile, string sysFile, string pwd, str
 }
 
 bool FlashDIMM::add(FlashTransaction &trans){
-	return controller->addTransaction(trans);
+	return ftl->addTransaction(trans);
 }
 
 bool FlashDIMM::addTransaction(bool isWrite, uint64_t addr){
@@ -113,6 +114,8 @@ void FlashDIMM::update(void){
 		}
 	}
 		
+	ftl->update();
+	ftl->step();
 	controller->update();
 	controller->step();
 

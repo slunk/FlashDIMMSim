@@ -75,8 +75,9 @@ void test_obj::run_test(void){
 		(*flashDimm).update();
 		if (cycle < NUM_WRITES){
 			t= FlashTransaction(DATA_READ, cycle*64, (void *)0xfeedface);
-			//(*flashDimm).add(t);
-			(*flashDimm).addTransaction(false, cycle*64);
+
+			(*flashDimm).add(t);
+			//(*flashDimm).addTransaction(false, cycle*64);
 		}
 		if (flashDimm->numReads == NUM_WRITES)
 			break;

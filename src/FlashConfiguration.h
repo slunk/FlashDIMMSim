@@ -73,6 +73,7 @@ extern uint WRITE_TIME;
 extern uint ERASE_TIME;
 extern uint DATA_TIME;
 extern uint COMMAND_TIME;
+extern uint LOOKUP_TIME;
 
 extern uint OUTPUT;
 

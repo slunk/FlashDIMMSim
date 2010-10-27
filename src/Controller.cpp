@@ -39,6 +39,11 @@ void Controller::receiveFromChannel(ChannelPacket *busPacket){
 	delete(busPacket);
 }
 
+bool Controller::addPacket(ChannelPacket *p){
+	channelQueues[p->package].push(p);
+	return true;
+}
+
 void Controller::update(void){
 	uint i;
 	
@@ -75,7 +80,7 @@ void Controller::update(void){
 	}
 
 	//Look for new transactions. If there are any, translate their address, make buspackets, and place in appropriate channel queue
-	while (!transactionQueue.empty()){
+	/*while (!transactionQueue.empty()){
 		//transactionQueue.front().print();
 		switch (transactionQueue.front().transactionType){
 			case DATA_READ:{
@@ -97,7 +102,7 @@ void Controller::update(void){
 				break;
 		}
 		transactionQueue.erase(transactionQueue.begin());
-	}
+	}*/
 	
 	//See if any read data is ready to return
 	while (!returnTransaction.empty()){

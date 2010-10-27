@@ -6,6 +6,7 @@
 #include "SimObj.h"
 #include "FlashConfiguration.h"
 #include "Controller.h"
+#include "Ftl.h"
 #include "Die.h"
 #include "FlashTransaction.h"
 #include "Callbacks.h"
@@ -25,6 +26,7 @@ namespace FDSim{
 			void RegisterCallbacks(Callback_t *readDone, Callback_t *writeDone);
 
 			Controller *controller;
+			Ftl *ftl;
 			vector<Package> *packages;
 
 			//std::ofsream visDataOut;

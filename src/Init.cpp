@@ -17,6 +17,7 @@ uint WRITE_TIME;
 uint ERASE_TIME;
 uint DATA_TIME;
 uint COMMAND_TIME;
+uint LOOKUP_TIME;
 
 uint DEBUG_INIT= 0;
 
@@ -37,6 +38,7 @@ namespace FDSim
 		DEFINE_UINT_PARAM(ERASE_TIME,DEV_PARAM),
 		DEFINE_UINT_PARAM(DATA_TIME,DEV_PARAM),
 		DEFINE_UINT_PARAM(COMMAND_TIME,DEV_PARAM),
+		DEFINE_UINT_PARAM(LOOKUP_TIME,DEV_PARAM),
 
 		{"", NULL, UINT, SYS_PARAM, false} // tracer value to signify end of list; if you delete it, epic fail will result
 	};

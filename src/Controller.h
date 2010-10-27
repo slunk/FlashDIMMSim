@@ -5,7 +5,6 @@
 
 #include "SimObj.h"
 #include "FlashConfiguration.h"
-#include "Ftl.h"
 #include "Die.h"
 #include "Channel.h"
 #include "FlashTransaction.h"
@@ -26,6 +25,7 @@ namespace FDSim{
 			void returnReadData(const FlashTransaction &trans);
 			void attachChannel(Channel *channel);
 			void receiveFromChannel(ChannelPacket *busPacket);
+			bool addPacket(ChannelPacket *p);
 			void update(void);
 			FlashDIMM *parentFlashDIMM;
 			std::list<FlashTransaction> transactionQueue;
@@ -33,7 +33,7 @@ namespace FDSim{
 
 			std::list<FlashTransaction> returnTransaction;
 
-			Ftl ftl;
+			//Ftl ftl;
 			std::vector<Package> *packages;
 			std::vector<std::queue <ChannelPacket *> > channelQueues;
 			std::vector<ChannelPacket *> outgoingPackets;
