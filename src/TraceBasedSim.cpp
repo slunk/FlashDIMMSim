@@ -15,7 +15,7 @@
 #include "TraceBasedSim.h"
 
 #define NUM_WRITES 100
-#define SIM_CYCLES 100000000
+#define SIM_CYCLES 1000000
 
 /*temporary assignments for externed variables.
  * This should really be done with another class
@@ -67,7 +67,7 @@ void test_obj::run_test(void){
 	FlashTransaction t;
 
 	for (write= 0; write<NUM_WRITES*64; write+=64){
-		t= FlashTransaction(DATA_WRITE, write, (void *)0xdeadbeef);
+		t= FlashTransaction(DATA_WRITE, write*64, (void *)0xdeadbeef);
 		(*flashDimm).add(t);
 	}
 

@@ -8,6 +8,7 @@
 //Code copied from DRAMSim
 
 #include <stdint.h>
+#include <assert.h>
 
 namespace FDSim
 {
