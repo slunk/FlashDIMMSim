@@ -8,7 +8,7 @@ CXXFLAGS= -O3 -DNO_STORAGE -DNO_OUTPUT
 endif
 endif
 ifdef PROFILE
-CXXFLAGS = -pg
+CXXFLAGS += -p -g 
 endif 
 
 EXE_NAME=FDSim

@@ -129,6 +129,7 @@ void Ftl::update(void){
 							}
 
 				if (!done){
+					// TODO: Call GC
 					ERROR("No free pages? GC needs some work.");
 					exit(1);
 				} else {
@@ -155,6 +156,6 @@ void Ftl::update(void){
 		transactionQueue.pop_front();
 		busy = 0;
 		lookupCounter = -1;
-	} else
+	} else if (busy)
 		lookupCounter--;
 }
