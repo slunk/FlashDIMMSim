@@ -49,7 +49,7 @@ void ChannelPacket::print(uint64_t currentClockCycle){
 
 void ChannelPacket::printData(const void *data) 
 {
-	/*if (data == NULL) 
+	if (data == NULL) 
 	{
 		PRINTN("NO DATA");
 		return;
@@ -59,5 +59,5 @@ void ChannelPacket::printData(const void *data)
 	{
 		PRINTN(((uint64_t *)data)[i]);
 	}
-	PRINTN("'" << dec);*/
+	PRINTN("'" << dec);
 }

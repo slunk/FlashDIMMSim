@@ -1,6 +1,5 @@
 //Channel.cpp
 //class file for channel class
-//no contention modeled yet
 #include "Channel.h"
 #include "ChannelPacket.h"
 #include "Controller.h"

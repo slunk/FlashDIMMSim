@@ -78,32 +78,7 @@ void Controller::update(void){
 			}
 		}
 	}
-
-	//Look for new transactions. If there are any, translate their address, make buspackets, and place in appropriate channel queue
-	/*while (!transactionQueue.empty()){
-		//transactionQueue.front().print();
-		switch (transactionQueue.front().transactionType){
-			case DATA_READ:{
-				ChannelPacket *readPacket= ftl.translate(READ, transactionQueue.front());
-				channelQueues[readPacket->package].push(readPacket);
-				}
-				break;
-			case DATA_WRITE:
-				{
-				ChannelPacket *dataPacket= ftl.translate(DATA, transactionQueue.front());
-				ChannelPacket *writePacket= new ChannelPacket(WRITE, dataPacket->physicalAddress, dataPacket->page, dataPacket->block, dataPacket->plane, dataPacket->die, dataPacket->package, dataPacket->data); 
-				channelQueues[writePacket->package].push(dataPacket);
-				channelQueues[writePacket->package].push(writePacket);
-				}
-				break;
-			default:
-				ERROR("Invalid transaction type from hybrid controller: "<<transactionQueue.front().transactionType);
-				exit(1);
-				break;
-		}
-		transactionQueue.erase(transactionQueue.begin());
-	}*/
-	
+		
 	//See if any read data is ready to return
 	while (!returnTransaction.empty()){
 		//call return callback

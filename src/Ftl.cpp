@@ -71,8 +71,6 @@ ChannelPacket *Ftl::translate(ChannelPacketType type, uint64_t addr){
 	tempB = physicalAddress << packageBitWidth;
 	package = tempA ^ tempB;
 
-//cout<<package<<" "<<die<<" "<<plane<<" "<<block<<" "<<" "<<page<<endl;
-
 	return new ChannelPacket(type, addr, page, block, plane, die, package, NULL);
 }
 
@@ -127,8 +125,7 @@ void Ftl::update(void){
 						dirty[addressMap[vAddr] / BLOCK_SIZE][(addressMap[vAddr] / FLASH_PAGE_SIZE) % PAGES_PER_BLOCK] = true;
 					}
 					//look for first free physical page starting at the write pointer
-					start = FLASH_PAGE_SIZE * PAGES_PER_BLOCK * BLOCKS_PER_PLANE * (plane + PLANES_PER_DIE * 
-							(die + NUM_PACKAGES * channel));//yuck!
+					start = FLASH_PAGE_SIZE * PAGES_PER_BLOCK * BLOCKS_PER_PLANE * (plane + PLANES_PER_DIE * (die + NUM_PACKAGES * channel));
 
 					for (block = start / BLOCK_SIZE ; block < TOTAL_SIZE / BLOCK_SIZE && !done; block++)
 						for (page = 0 ; page < PAGES_PER_BLOCK  && !done ; page++)
