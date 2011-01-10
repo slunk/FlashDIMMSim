@@ -110,6 +110,11 @@ void Ftl::update(void){
 			uint64_t vAddr = currentTransaction.address, pAddr;
 			bool done = false;
 			ChannelPacket *commandPacket, *dataPacket;
+			
+			if (currentTransaction.transactionType == DATA_WRITE)
+							cout<<"Write at "<<vAddr<<endl;
+						else
+							cout<<"Read at "<<vAddr<<endl;
 
 			switch (currentTransaction.transactionType){
 				case DATA_READ:
@@ -147,7 +152,7 @@ void Ftl::update(void){
 									used_page_count++;
 									done = true;
 								}
-
+					
 					if (!done){
 						// TODO: Call GC
 						ERROR("No free pages? GC needs some work.");
