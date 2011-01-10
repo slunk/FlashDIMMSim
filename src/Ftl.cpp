@@ -111,11 +111,6 @@ void Ftl::update(void){
 			bool done = false;
 			ChannelPacket *commandPacket, *dataPacket;
 			
-			if (currentTransaction.transactionType == DATA_WRITE)
-							cout<<"Write at "<<vAddr<<endl;
-						else
-							cout<<"Read at "<<vAddr<<endl;
-
 			switch (currentTransaction.transactionType){
 				case DATA_READ:
 					if (addressMap.find(vAddr) == addressMap.end()){
