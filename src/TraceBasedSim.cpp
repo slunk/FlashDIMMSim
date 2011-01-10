@@ -74,12 +74,14 @@ void test_obj::run_test(void){
 	for (cycle= 0; cycle<SIM_CYCLES; cycle++){
 		(*flashDimm).update();
 		if (cycle < NUM_WRITES){
-			t= FlashTransaction(DATA_READ, cycle*64, (void *)0xfeedface);
+			//t= FlashTransaction(DATA_READ, cycle*64, (void *)0xfeedface);
 
-			(*flashDimm).add(t);
+			//(*flashDimm).add(t);
 			//(*flashDimm).addTransaction(false, cycle*64);
 		}
 		if (flashDimm->numReads == NUM_WRITES)
+			break;
+		if (flashDimm->numWrites == NUM_WRITES)
 			break;
 	}
 

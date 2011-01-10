@@ -21,12 +21,6 @@ void Controller::attachPackages(vector<Package> *packages){
 	this->packages= packages;
 }
 
-bool Controller::addTransaction(FlashTransaction &trans){
-	trans.timeAdded= currentClockCycle;
-	transactionQueue.push_back(trans);
-	return true;
-}
-
 void Controller::returnReadData(const FlashTransaction  &trans){
 	if(parentFlashDIMM->ReturnReadData!=NULL){
 		(*parentFlashDIMM->ReturnReadData)(parentFlashDIMM->systemID, trans.address, currentClockCycle);

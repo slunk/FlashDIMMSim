@@ -87,7 +87,7 @@ bool FlashDIMM::add(FlashTransaction &trans){
 bool FlashDIMM::addTransaction(bool isWrite, uint64_t addr){
 	TransactionType type = isWrite ? DATA_WRITE : DATA_READ;
 	FlashTransaction trans = FlashTransaction(type, addr, NULL);
-	return controller->addTransaction(trans);
+	return ftl->addTransaction(trans);
 }
 
 string FlashDIMM::SetOutputFileName(string tracefilename){
