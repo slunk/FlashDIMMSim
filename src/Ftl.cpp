@@ -35,9 +35,9 @@ Ftl::Ftl(Controller *c){
 	controller = c;
 }
 
-ChannelPacket *Ftl::translate(ChannelPacketType type, uint64_t addr){
+ChannelPacket *Ftl::translate(ChannelPacketType type, uint64_t vAddr, uint64_t pAddr){
 	uint package, die, plane, block, page;
-	uint64_t tempA, tempB, physicalAddress = addr;
+	uint64_t tempA, tempB, physicalAddress = pAddr;
 
 	if (physicalAddress > TOTAL_SIZE*1024 - 1 || physicalAddress < 0){
 		ERROR("Inavlid address in Ftl: "<<physicalAddress);
@@ -71,7 +71,7 @@ ChannelPacket *Ftl::translate(ChannelPacketType type, uint64_t addr){
 	tempB = physicalAddress << packageBitWidth;
 	package = tempA ^ tempB;
 
-	return new ChannelPacket(type, addr, page, block, plane, die, package, NULL);
+	return new ChannelPacket(type, vAddr, pAddr, page, block, plane, die, package, NULL);
 }
 
 bool Ftl::addTransaction(FlashTransaction &t){
@@ -116,7 +116,7 @@ void Ftl::update(void){
 					if (addressMap.find(vAddr) == addressMap.end()){
 						controller->returnReadData(FlashTransaction(RETURN_DATA, 0, (void *)0xdeadbeef));
 					} else {
-						commandPacket = Ftl::translate(READ, addressMap[vAddr]);
+						commandPacket = Ftl::translate(READ, vAddr, addressMap[vAddr]);
 						controller->addPacket(commandPacket);
 					}
 					break;
@@ -156,8 +156,8 @@ void Ftl::update(void){
 						addressMap[vAddr] = pAddr;
 					}
 					//send write to controller
-					dataPacket = Ftl::translate(DATA, pAddr);
-					commandPacket = Ftl::translate(WRITE, pAddr);
+					dataPacket = Ftl::translate(DATA, vAddr, pAddr);
+					commandPacket = Ftl::translate(WRITE, vAddr, pAddr);
 					controller->addPacket(dataPacket);
 					controller->addPacket(commandPacket);
 					//update "write pointer"

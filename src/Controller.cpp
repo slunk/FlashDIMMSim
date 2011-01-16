@@ -29,7 +29,7 @@ void Controller::returnReadData(const FlashTransaction  &trans){
 }
 
 void Controller::receiveFromChannel(ChannelPacket *busPacket){
-	returnTransaction.push_back(FlashTransaction(RETURN_DATA, busPacket->physicalAddress, busPacket->data));
+	returnTransaction.push_back(FlashTransaction(RETURN_DATA, busPacket->virtualAddress, busPacket->data));
 	delete(busPacket);
 }
 

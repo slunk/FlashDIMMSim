@@ -77,7 +77,7 @@ void Die::update(void){
 					 parentFlashDIMM->numWrites++;
 					 //call write callback
 					 if (parentFlashDIMM->WriteDataDone != NULL){
-						 (*parentFlashDIMM->WriteDataDone)(parentFlashDIMM->systemID, currentCommand->physicalAddress, currentClockCycle);
+						 (*parentFlashDIMM->WriteDataDone)(parentFlashDIMM->systemID, currentCommand->virtualAddress, currentClockCycle);
 
 					 }
 					 break;

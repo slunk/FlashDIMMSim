@@ -13,7 +13,7 @@ namespace FDSim{
 	class Ftl : public SimObj{
 		public:
 			Ftl(Controller *c);
-			ChannelPacket *translate(ChannelPacketType type, uint64_t addr);
+			ChannelPacket *translate(ChannelPacketType type, uint64_t vAddr, uint64_t pAddr);
 			bool addTransaction(FlashTransaction &t);
 			void update(void);
 			bool checkGC(void); 
