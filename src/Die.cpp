@@ -96,7 +96,6 @@ void Die::update(void){
 	 }
 	}
 
-	//using channel without contention for now
 	if (!returnDataPackets.empty()){
 		if (channel->hasChannel(DIE, id)){
 			if (dataCyclesLeft == 0){
