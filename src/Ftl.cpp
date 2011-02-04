@@ -122,7 +122,7 @@ void Ftl::update(void){
 					break;
 				case DATA_WRITE:
 					if (addressMap.find(vAddr) != addressMap.end()){
-						dirty[addressMap[vAddr] / BLOCK_SIZE][(addressMap[vAddr] / FLASH_PAGE_SIZE) % PAGES_PER_BLOCK] = true;
+						dirty[addressMap[vAddr] / (BLOCK_SIZE * 1024)][(addressMap[vAddr] / FLASH_PAGE_SIZE) % PAGES_PER_BLOCK] = true;
 					}
 					//look for first free physical page starting at the write pointer
 					start = FLASH_PAGE_SIZE * PAGES_PER_BLOCK * BLOCKS_PER_PLANE * (plane + PLANES_PER_DIE * (die + NUM_PACKAGES * channel));
