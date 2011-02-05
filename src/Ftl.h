@@ -31,7 +31,6 @@ namespace FDSim{
 			std::vector<vector<bool>> dirty;
 			std::vector<vector<bool>> used;
 			std::list<FlashTransaction> transactionQueue;
-			std::unordered_map<uint64_t,uint64_t> erase_counter;
 	};
 }
 #endif
