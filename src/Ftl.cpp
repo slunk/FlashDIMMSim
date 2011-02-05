@@ -128,7 +128,7 @@ void Ftl::update(void){
 					//look for first free physical page starting at the write pointer
 					start = BLOCKS_PER_PLANE * (plane + PLANES_PER_DIE * (die + NUM_PACKAGES * channel));
 
-					for (block = start ; block < TOTAL_SIZE && !done; block++)
+					for (block = start ; block < TOTAL_SIZE / BLOCK_SIZE && !done; block++)
 						for (page = 0 ; page < PAGES_PER_BLOCK && !done ; page++)
 							if (!used[block][page]){
 								pAddr = block * BLOCK_SIZE + page * FLASH_PAGE_SIZE;
