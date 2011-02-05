@@ -157,7 +157,6 @@ void Ftl::update(void){
 					}
 					dataPacket = Ftl::translate(DATA, vAddr, pAddr);
 					commandPacket = Ftl::translate(WRITE, vAddr, pAddr);
-					commandPacket->print(0);
 					controller->addPacket(dataPacket);
 					controller->addPacket(commandPacket);
 					//update "write pointer"
