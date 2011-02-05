@@ -11,7 +11,7 @@ using namespace std;
 Ftl::Ftl(Controller *c){
 	int numBlocks = NUM_PACKAGES * DIES_PER_PACKAGE * PLANES_PER_DIE * BLOCKS_PER_PLANE;
 
-	offset = log2(FLASH_PAGE_SIZE * 1024);
+	offset = log2(FLASH_PAGE_SIZE);
 	pageBitWidth = log2(PAGES_PER_BLOCK);
 	blockBitWidth = log2(BLOCKS_PER_PLANE);
 	planeBitWidth = log2(PLANES_PER_DIE);
@@ -39,7 +39,7 @@ ChannelPacket *Ftl::translate(ChannelPacketType type, uint64_t vAddr, uint64_t p
 	uint package, die, plane, block, page;
 	uint64_t tempA, tempB, physicalAddress = pAddr;
 
-	if (physicalAddress > TOTAL_SIZE*1024 - 1 || physicalAddress < 0){
+	if (physicalAddress > TOTAL_SIZE - 1 || physicalAddress < 0){
 		ERROR("Inavlid address in Ftl: "<<physicalAddress);
 		exit(1);
 	}
@@ -122,27 +122,27 @@ void Ftl::update(void){
 					break;
 				case DATA_WRITE:
 					if (addressMap.find(vAddr) != addressMap.end()){
-						dirty[addressMap[vAddr] / (BLOCK_SIZE * 1024)][(addressMap[vAddr] / (FLASH_PAGE_SIZE * 1024)) % PAGES_PER_BLOCK] = true;
+						dirty[addressMap[vAddr] / BLOCK_SIZE][(addressMap[vAddr] / FLASH_PAGE_SIZE) % PAGES_PER_BLOCK] = true;
 					}
-					//look for first free physical page starting at the write pointer
-					start = FLASH_PAGE_SIZE * PAGES_PER_BLOCK * BLOCKS_PER_PLANE * (plane + PLANES_PER_DIE * (die + NUM_PACKAGES * channel));
 
-					for (block = start / BLOCK_SIZE ; block < TOTAL_SIZE / BLOCK_SIZE && !done; block++)
-						for (page = 0 ; page < PAGES_PER_BLOCK  && !done ; page++)
+					//look for first free physical page starting at the write pointer
+					start = BLOCKS_PER_PLANE * (plane + PLANES_PER_DIE * (die + NUM_PACKAGES * channel));
+
+					for (block = start ; block < TOTAL_SIZE && !done; block++)
+						for (page = 0 ; page < PAGES_PER_BLOCK && !done ; page++)
 							if (!used[block][page]){
-								pAddr = (block * BLOCK_SIZE + page * FLASH_PAGE_SIZE) * 1024;
+								pAddr = block * BLOCK_SIZE + page * FLASH_PAGE_SIZE;
 								used[block][page] = true;
 								used_page_count++;
 								done = true;
 							}
 
 					//if we didn't find a free page after scanning til the end, check the beginning
-
 					if (!done)
-						for (block = 0 ; block < start / BLOCK_SIZE && !done ; block++)
+						for (block = 0 ; block < start && !done ; block++)
 							for (page = 0 ; page < PAGES_PER_BLOCK && !done ; page++)
 								if (!used[block][page]){
-									pAddr = (block * BLOCK_SIZE + page * FLASH_PAGE_SIZE) * 1024;
+									pAddr = block * BLOCK_SIZE + page * FLASH_PAGE_SIZE;
 									used[block][page] = true;
 									used_page_count++;
 									done = true;
@@ -155,9 +155,9 @@ void Ftl::update(void){
 					} else {
 						addressMap[vAddr] = pAddr;
 					}
-					//send write to controller
 					dataPacket = Ftl::translate(DATA, vAddr, pAddr);
 					commandPacket = Ftl::translate(WRITE, vAddr, pAddr);
+					commandPacket->print(0);
 					controller->addPacket(dataPacket);
 					controller->addPacket(commandPacket);
 					//update "write pointer"
@@ -180,14 +180,12 @@ void Ftl::update(void){
 			}
 			transactionQueue.pop_front();
 			busy = 0;
-			lookupCounter = -1;
 		} 
 		else
 			lookupCounter--;
 	} // if busy
 	else {
 		// Not currently busy.
-
 		if (!transactionQueue.empty()) {
 			busy = 1;
 			currentTransaction = transactionQueue.front();
@@ -249,7 +247,7 @@ void Ftl::runGC(void) {
 	for (page = 0; page < PAGES_PER_BLOCK; page++) {
 		if (used[dirty_block][page] == true && dirty[dirty_block][page] == false) {
 			// Compute the physical address to move.
-			pAddr = (dirty_block * BLOCK_SIZE + page * FLASH_PAGE_SIZE) * 1024;
+			pAddr = dirty_block * BLOCK_SIZE + page * FLASH_PAGE_SIZE;
 
 			// Do a reverse lookup for the virtual page address.
 			// This is slow, but the alternative is maintaining a full reverse lookup map.

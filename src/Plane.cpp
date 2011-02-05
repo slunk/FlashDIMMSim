@@ -16,6 +16,7 @@ void Plane::read(ChannelPacket *busPacket){
 	if (blocks.find(busPacket->block) != blocks.end()){
 		busPacket->data= blocks[busPacket->block].read(busPacket->page);
 	} else{
+		DEBUG(busPacket->virtualAddress);
 		DEBUG("Invalid read: Block "<<busPacket->block<<" hasn't been written to");
 	}
 
