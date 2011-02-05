@@ -82,29 +82,6 @@ bool Ftl::addTransaction(FlashTransaction &t){
 void Ftl::update(void){
 	uint64_t block, page, start;
 
-	// Decrement block erase counters
-	for (std::unordered_map<uint64_t,uint64_t>::iterator it = erase_counter.begin(); it != erase_counter.end(); it++) {
-
-		// Decrement the counter.
-		uint64_t cnt = (*it).second;
-		cnt--;
-		(*it).second = cnt;
-
-		// Check to see if done.
-		if (cnt == 0) {
-			// Set all the bits in the page to be clean.
-			block = (*it).first;
-			for (page = 0; page < PAGES_PER_BLOCK; page++) {
-				used[block][page] = false;
-				used_page_count--;
-				dirty[block][page] = false;
-			}
-
-			// Remove from erase counter map.
-			erase_counter.erase(it);
-		}
-	}
-
 	if (busy) {
 		if (lookupCounter == 0){
 			uint64_t vAddr = currentTransaction.address, pAddr;
@@ -169,8 +146,13 @@ void Ftl::update(void){
 					break;
 
 				case BLOCK_ERASE:
-					// Note: For this command, vAddr refers to the block number to erase.
-					erase_counter[vAddr] = 1000000; // Initially hardcoded as 1.5 ms.
+					if (addressMap.find(vAddr) != addressMap.end()){
+						commandPacket = Ftl::translate(ERASE, vAddr, pAddr);
+						controller->addPacket(commandPacket);
+					} else {
+						ERROR("GC issued an erase to an address that has not been written to");
+						exit(1);
+					}
 					break;
 				default:
 					ERROR("Transaction in Ftl that isn't a read or write... What?");
