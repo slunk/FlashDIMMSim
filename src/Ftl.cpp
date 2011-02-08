@@ -146,13 +146,8 @@ void Ftl::update(void){
 					break;
 
 				case BLOCK_ERASE:
-					if (addressMap.find(vAddr) != addressMap.end()){
-						commandPacket = Ftl::translate(ERASE, vAddr, addressMap[vAddr]);
-						controller->addPacket(commandPacket);
-					} else {
-						ERROR("GC issued an erase to an address that has not been written to");
-						exit(1);
-					}
+					commandPacket = Ftl::translate(ERASE, 0, vAddr);//note: vAddr is actually the pAddr in this case with the way garbage collection is written
+					controller->addPacket(commandPacket);
 					break;
 				default:
 					ERROR("Transaction in Ftl that isn't a read or write... What?");
