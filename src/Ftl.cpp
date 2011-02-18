@@ -249,8 +249,8 @@ void Ftl::runGC(void) {
 	}
 
 	// Schedule the BLOCK_ERASE command.
-	// Note: The address field is just the block number, not an actual byte address.
-	trans = FlashTransaction(BLOCK_ERASE, dirty_block, NULL);
+	// Note: The address field is just the block address, not an actual byte address.
+	trans = FlashTransaction(BLOCK_ERASE, dirty_block * BLOCK_SIZE, NULL);
 	addTransaction(trans);
 
 }
