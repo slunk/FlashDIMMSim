@@ -15,6 +15,7 @@ namespace FDSim
 	{
 		DATA_READ, 
 		DATA_WRITE,
+		GC_DATA,
 		RETURN_DATA,
 		BLOCK_ERASE
 	};

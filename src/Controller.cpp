@@ -22,14 +22,17 @@ void Controller::attachPackages(vector<Package> *packages){
 }
 
 void Controller::returnReadData(const FlashTransaction  &trans){
-	if(parentFlashDIMM->ReturnReadData!=NULL){
+	if(parentFlashDIMM->ReturnReadData!=NULL && trans.transactionType){
 		(*parentFlashDIMM->ReturnReadData)(parentFlashDIMM->systemID, trans.address, currentClockCycle);
 	}
 	parentFlashDIMM->numReads++;
 }
 
 void Controller::receiveFromChannel(ChannelPacket *busPacket){
-	returnTransaction.push_back(FlashTransaction(RETURN_DATA, busPacket->virtualAddress, busPacket->data));
+	if (busPacket->busPacketType == READ)
+		returnTransaction.push_back(FlashTransaction(RETURN_DATA, busPacket->virtualAddress, busPacket->data));
+	else
+		returnTransaction.push_back(FlashTransaction(GC_DATA, busPacket->virtualAddress, busPacket->data));
 	delete(busPacket);
 }
 
