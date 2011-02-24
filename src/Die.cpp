@@ -35,9 +35,11 @@ void Die::receiveFromChannel(ChannelPacket *busPacket){
 		 currentCommands[busPacket->plane] = busPacket;
 		 switch (busPacket->busPacketType){
 			 case READ:
+			 case GC_READ:
 				 controlCyclesLeft[busPacket->plane]= READ_TIME;
 				 break;
 			 case WRITE:
+			 case GC_WRITE:
 				 controlCyclesLeft[busPacket->plane]= WRITE_TIME;
 				 break;
 			 case ERASE:
@@ -69,6 +71,7 @@ void Die::update(void){
 		 if (controlCyclesLeft[i] == 0){
 			 switch (currentCommand->busPacketType){
 				 case READ:
+				 case GC_READ:
 					 planes[currentCommand->plane].read(currentCommand);
 					 returnDataPackets.push(planes[currentCommand->plane].readFromData());
 					 break;
@@ -81,6 +84,10 @@ void Die::update(void){
 
 					 }
 					 break;
+				 case GC_WRITE:
+					 planes[currentCommand->plane].write(currentCommand);
+					 parentFlashDIMM->numWrites++;
+
 				 case ERASE:
 					 planes[currentCommand->plane].erase(currentCommand);
 					 parentFlashDIMM->numErases++;
