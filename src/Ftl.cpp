@@ -31,6 +31,7 @@ Ftl::Ftl(Controller *c){
 	transactionQueue = list<FlashTransaction>();
 
 	used_page_count = 0;
+	gc_flag = false;
 
 	controller = c;
 }
@@ -75,8 +76,11 @@ ChannelPacket *Ftl::translate(ChannelPacketType type, uint64_t vAddr, uint64_t p
 }
 
 bool Ftl::addTransaction(FlashTransaction &t){
-	transactionQueue.push_back(t);
-	return true;
+	if (!gc_flag){
+		transactionQueue.push_back(t);
+		return true;
+	}
+	return false;
 }
 
 void Ftl::update(void){
@@ -126,9 +130,9 @@ void Ftl::update(void){
 								}
 					
 					if (!done){
-						// TODO: Call GC
-						ERROR("No free pages? GC needs some work.");
-						exit(1);
+						//bad news
+						ERROR("FLASH DIMM IS COMPLETELY FULL - If you see this, something has gone horribly wrong.");
+						exit(9001);
 					} else {
 						addressMap[vAddr] = pAddr;
 					}
@@ -146,7 +150,6 @@ void Ftl::update(void){
 					break;
 
 				case BLOCK_ERASE:
-					used_page_count -= PAGES_PER_BLOCK;
 					commandPacket = Ftl::translate(ERASE, 0, vAddr);//note: vAddr is actually the pAddr in this case with the way garbage collection is written
 					controller->addPacket(commandPacket);
 					break;
@@ -157,7 +160,7 @@ void Ftl::update(void){
 			}
 			transactionQueue.pop_front();
 			busy = 0;
-		} 
+		} //if lookupCounter is not 0
 		else
 			lookupCounter--;
 	} // if busy
@@ -170,35 +173,34 @@ void Ftl::update(void){
 		}
 		else {
 			// Check to see if GC needs to run.
-			if (checkGC()) {
+			if (checkGC() && gc_status < 2) {
 				// Run the GC.
+				gc_counter+= ERASE_TIME;
+				gc_status++;
 				runGC();
 			}
-
 		}
-	
 	}
 
+	if (gc_counter % ERASE_TIME == 1 && gc_status > 0)
+		gc_status--;
+	if (gc_counter > 0)
+		gc_counter--;
+
+	if (used_page_count > FORCE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE) && gc_status < NUM_PACKAGES * DIES_PER_PACKAGE * PLANES_PER_DIE){
+		gc_status++;
+		gc_counter+= ERASE_TIME;
+		gc_flag = true;
+		runGC();
+	} else if (used_page_count <= (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE))//this is a little iffy
+		gc_flag = false;
 }
 
 bool Ftl::checkGC(void){
-	//uint64_t block, page, count = 0;
-
-	// Count the number of blocks with used pages.
-	//for (block = 0; block < TOTAL_SIZE / BLOCK_SIZE; block++) {
-	//	for (page = 0; page < PAGES_PER_BLOCK; page++) {
-	//		if (used[block][page] == true) {
-	//			count++;
-	//			break;
-	//		}
-	//	}
-	//}
-	
 	// Return true if more than 70% of blocks are in use and false otherwise.
-	if (((float)used_page_count / TOTAL_SIZE) > 0.7)
+	if (used_page_count > (IDLE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE)))
 		return true;
-	else
-		return false;
+	return false;
 }
 
 
@@ -246,6 +248,12 @@ void Ftl::runGC(void) {
 			addTransaction(trans);
 			trans = FlashTransaction(DATA_WRITE, vAddr, NULL);
 			addTransaction(trans);
+		} else if (dirty[dirty_block][page] == true){
+			dirty[dirty_block][page] = false;
+		}	
+		if (used[dirty_block][page] == true){
+			used_page_count--;
+			used[dirty_block][page] = false;
 		}
 	}
 

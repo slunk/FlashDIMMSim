@@ -22,8 +22,9 @@ namespace FDSim{
 			void inc_ptr(void); 
 			Controller *controller;
 		private:
+			bool gc_flag;
 			uint offset, pageBitWidth, blockBitWidth, planeBitWidth, dieBitWidth, packageBitWidth;
-			uint channel, die, plane, lookupCounter;
+			uint channel, die, plane, lookupCounter, gc_status, gc_counter;
 			uint64_t used_page_count;
 			FlashTransaction currentTransaction;
 			uint busy;
