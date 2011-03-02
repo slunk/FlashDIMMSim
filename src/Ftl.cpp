@@ -85,6 +85,7 @@ bool Ftl::addTransaction(FlashTransaction &t){
 
 void Ftl::update(void){
 	uint64_t block, page, start;
+	uint i;
 
 	if (busy) {
 		if (lookupCounter == 0){
@@ -173,25 +174,26 @@ void Ftl::update(void){
 		}
 		else {
 			// Check to see if GC needs to run.
-			if (checkGC() && gc_status < 2) {
+			if (checkGC() && !gc_status) {
 				// Run the GC.
-				gc_counter+= ERASE_TIME;
-				gc_status++;
+				gc_counter = ERASE_TIME;
+				gc_status = 1;
 				runGC();
 			}
 		}
 	}
 
-	if (gc_counter % ERASE_TIME == 1 && gc_status > 0)
-		gc_status--;
+	if (gc_counter % ERASE_TIME == 1 && gc_status)
+		gc_status = 0;
 	if (gc_counter > 0)
 		gc_counter--;
 
-	if (used_page_count > FORCE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE) && gc_status < NUM_PACKAGES * DIES_PER_PACKAGE * PLANES_PER_DIE){
-		gc_status++;
-		gc_counter+= ERASE_TIME;
+	if (used_page_count > FORCE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE) && !gc_status){
+		gc_status = 1;
+		gc_counter = ERASE_TIME;
 		gc_flag = true;
-		runGC();
+		for (i = 0 ; i < NUM_PACKAGES * DIES_PER_PACKAGE * PLANES_PER_DIE ; i++)
+			runGC();
 	} else if (used_page_count <= (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE))//this is a little iffy
 		gc_flag = false;
 }
