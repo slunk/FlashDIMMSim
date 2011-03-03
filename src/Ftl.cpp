@@ -183,24 +183,24 @@ void Ftl::update(void){
 		}
 	}
 
-	if (gc_counter % ERASE_TIME == 1 && gc_status)
+	if (gc_counter == 0 && gc_status)
 		gc_status = 0;
 	if (gc_counter > 0)
 		gc_counter--;
 
-	if (used_page_count > FORCE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE) && !gc_status){
+	if ((float)used_page_count > (float)FORCE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE) && !gc_status){
 		gc_status = 1;
 		gc_counter = ERASE_TIME;
 		gc_flag = true;
 		for (i = 0 ; i < NUM_PACKAGES * DIES_PER_PACKAGE * PLANES_PER_DIE ; i++)
 			runGC();
-	} else if (used_page_count <= (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE))//this is a little iffy
+	} else if ((float) used_page_count <= (float)(VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE))//this is a little iffy
 		gc_flag = false;
 }
 
 bool Ftl::checkGC(void){
 	// Return true if more than 70% of blocks are in use and false otherwise.
-	if (used_page_count > (IDLE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE)))
+	if ((float)used_page_count > (float)(IDLE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE)))
 		return true;
 	return false;
 }
