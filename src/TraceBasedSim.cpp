@@ -58,7 +58,8 @@ void test_obj::write_cb(uint id, uint64_t address, uint64_t cycle){
 
 void test_obj::run_test(void){
 	clock_t start= clock(), end;
-	uint write, cycle;
+	uint cycle;
+	//uint write, cycle;
 	FlashDIMM *flashDimm= new FlashDIMM(1,"ini/samsung_K9XXG08UXM.ini","ini/def_system.ini","","");
 	typedef CallbackBase<void,uint,uint64_t,uint64_t> Callback_t;
 	Callback_t *r = new Callback<test_obj, void, uint, uint64_t, uint64_t>(this, &test_obj::read_cb);
@@ -66,9 +67,10 @@ void test_obj::run_test(void){
 	flashDimm->RegisterCallbacks(r, w);
 	FlashTransaction t;
 
-	for (write= 0; write<NUM_WRITES; write++){
-		t= FlashTransaction(DATA_WRITE, write, (void *)0xdeadbeef);
+	for (; ; ){
+		t= FlashTransaction(DATA_WRITE, 0, (void *)0xdeadbeef);
 		(*flashDimm).add(t);
+		(*flashDimm).update();
 	}
 
 	for (cycle= 0; cycle<SIM_CYCLES; cycle++){

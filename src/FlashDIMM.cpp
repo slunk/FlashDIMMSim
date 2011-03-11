@@ -72,7 +72,7 @@ FlashDIMM::FlashDIMM(uint id, string deviceFile, string sysFile, string pwd, str
 		packages->push_back(pack);
 	}
 	controller->attachPackages(packages);
-	ftl = new Ftl(controller);
+	ftl = new Ftl(this, controller);
 	
 	ReturnReadData= NULL;
 	WriteDataDone= NULL;

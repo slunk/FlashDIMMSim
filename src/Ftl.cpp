@@ -3,12 +3,13 @@
 //
 #include "Ftl.h"
 #include "ChannelPacket.h"
+#include "FlashDIMM.h"
 #include <cmath>
 
 using namespace FDSim;
 using namespace std;
 
-Ftl::Ftl(Controller *c){
+Ftl::Ftl(FlashDIMM *p, Controller *c){
 	int numBlocks = NUM_PACKAGES * DIES_PER_PACKAGE * PLANES_PER_DIE * BLOCKS_PER_PLANE;
 
 	offset = log2(FLASH_PAGE_SIZE);
@@ -31,9 +32,12 @@ Ftl::Ftl(Controller *c){
 	transactionQueue = list<FlashTransaction>();
 
 	used_page_count = 0;
-	gc_flag = false;
+	gc_status = 0;
+	panic_mode = 0;
 
+	parent = p;
 	controller = c;
+	queue_size = 0;
 }
 
 ChannelPacket *Ftl::translate(ChannelPacketType type, uint64_t vAddr, uint64_t pAddr){
@@ -76,11 +80,17 @@ ChannelPacket *Ftl::translate(ChannelPacketType type, uint64_t vAddr, uint64_t p
 }
 
 bool Ftl::addTransaction(FlashTransaction &t){
-	if (!gc_flag){
+	if (!panic_mode && queue_size < 20){
+		queue_size++;
 		transactionQueue.push_back(t);
 		return true;
 	}
 	return false;
+}
+
+void Ftl::addGcTransaction(FlashTransaction &t){
+	queue_size++;
+	transactionQueue.push_back(t);
 }
 
 void Ftl::update(void){
@@ -155,11 +165,10 @@ void Ftl::update(void){
 					controller->addPacket(commandPacket);
 					break;
 				default:
-					ERROR("Transaction in Ftl that isn't a read or write... What?");
-					exit(1);
 					break;
 			}
 			transactionQueue.pop_front();
+			queue_size--;
 			busy = 0;
 		} //if lookupCounter is not 0
 		else
@@ -176,26 +185,29 @@ void Ftl::update(void){
 			// Check to see if GC needs to run.
 			if (checkGC() && !gc_status) {
 				// Run the GC.
-				gc_counter = ERASE_TIME;
+				start_erase = parent->numErases;
 				gc_status = 1;
 				runGC();
 			}
 		}
 	}
 
-	if (gc_counter == 0 && gc_status)
-		gc_status = 0;
-	if (gc_counter > 0)
-		gc_counter--;
+	if (gc_status){
+		if (!panic_mode && parent->numErases == start_erase + 1)
+			gc_status = 0;
+		if (panic_mode && parent->numErases == start_erase + (NUM_PACKAGES * DIES_PER_PACKAGE * PLANES_PER_DIE)){
+			panic_mode = 0;
+			gc_status = 0;
+		}
+	}
 
-	if ((float)used_page_count > (float)FORCE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE) && !gc_status){
+	if (!gc_status && (float)used_page_count > (float)(FORCE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE))){
+		start_erase = parent->numErases;
 		gc_status = 1;
-		gc_counter = ERASE_TIME;
-		gc_flag = true;
+		panic_mode = 1;
 		for (i = 0 ; i < NUM_PACKAGES * DIES_PER_PACKAGE * PLANES_PER_DIE ; i++)
 			runGC();
-	} else if ((float) used_page_count <= (float)(VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE))//this is a little iffy
-		gc_flag = false;
+	}
 }
 
 bool Ftl::checkGC(void){
@@ -209,6 +221,7 @@ bool Ftl::checkGC(void){
 void Ftl::runGC(void) {
 	uint64_t block, page, count, dirty_block=0, dirty_count=0, pAddr, vAddr, tmpAddr;
 	FlashTransaction trans;
+	cout<<"GC Running when there are "<<used_page_count<<" used pages"<<endl;
 
 	// Get the dirtiest block (assumes the flash keeps track of this with an online algorithm).
 	for (block = 0; block < TOTAL_SIZE / BLOCK_SIZE; block++) {
@@ -247,9 +260,9 @@ void Ftl::runGC(void) {
 
 			// Schedule a read and a write.
 			trans = FlashTransaction(DATA_READ, vAddr, NULL);
-			addTransaction(trans);
+			addGcTransaction(trans);
 			trans = FlashTransaction(DATA_WRITE, vAddr, NULL);
-			addTransaction(trans);
+			addGcTransaction(trans);
 		} else if (dirty[dirty_block][page] == true){
 			dirty[dirty_block][page] = false;
 		}	
@@ -258,11 +271,12 @@ void Ftl::runGC(void) {
 			used[dirty_block][page] = false;
 		}
 	}
+	cout<<"There are "<<used_page_count<<" used pages after gc"<<endl;
 
 	// Schedule the BLOCK_ERASE command.
 	// Note: The address field is just the block address, not an actual byte address.
 	trans = FlashTransaction(BLOCK_ERASE, dirty_block * BLOCK_SIZE, NULL);
-	addTransaction(trans);
+	addGcTransaction(trans);
 
 }
 
