@@ -12,13 +12,13 @@ using namespace std;
 Ftl::Ftl(FlashDIMM *p, Controller *c){
 	int numBlocks = NUM_PACKAGES * DIES_PER_PACKAGE * PLANES_PER_DIE * BLOCKS_PER_PLANE;
 
-	offset = log2(FLASH_PAGE_SIZE);
+	/*offset = log2(FLASH_PAGE_SIZE);
 	pageBitWidth = log2(PAGES_PER_BLOCK);
 	blockBitWidth = log2(BLOCKS_PER_PLANE);
 	planeBitWidth = log2(PLANES_PER_DIE);
 	dieBitWidth = log2(DIES_PER_PACKAGE);
 	packageBitWidth = log2(NUM_PACKAGES);
-
+*/
 	channel = 0;
 	die = 0;
 	plane = 0;
@@ -42,16 +42,27 @@ Ftl::Ftl(FlashDIMM *p, Controller *c){
 
 ChannelPacket *Ftl::translate(ChannelPacketType type, uint64_t vAddr, uint64_t pAddr){
 	uint package, die, plane, block, page;
-	uint64_t tempA, tempB, physicalAddress = pAddr;
+	//uint64_t tempA, tempB, physicalAddress = pAddr;
+	uint64_t physicalAddress = pAddr;
 
 	if (physicalAddress > TOTAL_SIZE - 1 || physicalAddress < 0){
 		ERROR("Inavlid address in Ftl: "<<physicalAddress);
 		exit(1);
 	}
 
-	physicalAddress = physicalAddress >> offset;
+	//physicalAddress = physicalAddress >> offset;
+	physicalAddress /= FLASH_PAGE_SIZE;
+	page = physicalAddress % PAGES_PER_BLOCK;
+	physicalAddress /= PAGES_PER_BLOCK;
+	block = physicalAddress % BLOCKS_PER_PLANE;
+	physicalAddress /= BLOCKS_PER_PLANE;
+	plane = physicalAddress % PLANES_PER_DIE;
+	physicalAddress /= PLANES_PER_DIE;
+	die = physicalAddress % DIES_PER_PACKAGE;
+	physicalAddress /= DIES_PER_PACKAGE;
+	package = physicalAddress % NUM_PACKAGES;
 
-	tempA = physicalAddress;
+	/*tempA = physicalAddress;
 	physicalAddress = physicalAddress >> pageBitWidth;
 	tempB = physicalAddress << pageBitWidth;
 	page = tempA ^ tempB;
@@ -75,12 +86,12 @@ ChannelPacket *Ftl::translate(ChannelPacketType type, uint64_t vAddr, uint64_t p
 	physicalAddress = physicalAddress >> packageBitWidth;
 	tempB = physicalAddress << packageBitWidth;
 	package = tempA ^ tempB;
-
+*/
 	return new ChannelPacket(type, vAddr, pAddr, page, block, plane, die, package, NULL);
 }
 
 bool Ftl::addTransaction(FlashTransaction &t){
-	if (!panic_mode && queue_size < 20){
+	if (!panic_mode && queue_size < BLOCKS_PER_PLANE - VIRTUAL_BLOCKS_PER_PLANE){
 		queue_size++;
 		transactionQueue.push_back(t);
 		return true;
@@ -121,24 +132,26 @@ void Ftl::update(void){
 					start = BLOCKS_PER_PLANE * (plane + PLANES_PER_DIE * (die + NUM_PACKAGES * channel));
 
 					for (block = start ; block < TOTAL_SIZE / BLOCK_SIZE && !done; block++)
-						for (page = 0 ; page < PAGES_PER_BLOCK && !done ; page++)
+						for (page = 0 ; page < PAGES_PER_BLOCK && !done ; page++){
 							if (!used[block][page]){
 								pAddr = block * BLOCK_SIZE + page * FLASH_PAGE_SIZE;
 								used[block][page] = true;
 								used_page_count++;
 								done = true;
 							}
+						}
 
 					//if we didn't find a free page after scanning til the end, check the beginning
 					if (!done)
 						for (block = 0 ; block < start && !done ; block++)
-							for (page = 0 ; page < PAGES_PER_BLOCK && !done ; page++)
+							for (page = 0 ; page < PAGES_PER_BLOCK && !done ; page++){
 								if (!used[block][page]){
 									pAddr = block * BLOCK_SIZE + page * FLASH_PAGE_SIZE;
 									used[block][page] = true;
 									used_page_count++;
 									done = true;
 								}
+							}
 					
 					if (!done){
 						//bad news
@@ -161,6 +174,13 @@ void Ftl::update(void){
 					break;
 
 				case BLOCK_ERASE:
+					for (i = 0 ; i < PAGES_PER_BLOCK ; i++){
+						dirty[vAddr / BLOCK_SIZE][i] = false;
+						if (used[vAddr / BLOCK_SIZE][i]){
+							used[vAddr / BLOCK_SIZE][i] = false;
+							used_page_count--;
+						}
+					}
 					commandPacket = Ftl::translate(ERASE, 0, vAddr);//note: vAddr is actually the pAddr in this case with the way garbage collection is written
 					controller->addPacket(commandPacket);
 					break;
@@ -195,17 +215,17 @@ void Ftl::update(void){
 	if (gc_status){
 		if (!panic_mode && parent->numErases == start_erase + 1)
 			gc_status = 0;
-		if (panic_mode && parent->numErases == start_erase + (NUM_PACKAGES * DIES_PER_PACKAGE * PLANES_PER_DIE)){
+		if (panic_mode && parent->numErases == start_erase + PLANES_PER_DIE){
 			panic_mode = 0;
 			gc_status = 0;
 		}
 	}
 
-	if (!gc_status && (float)used_page_count > (float)(FORCE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE))){
+	if (!gc_status && (float)used_page_count >= (float)(FORCE_GC_THRESHOLD * (VIRTUAL_TOTAL_SIZE / FLASH_PAGE_SIZE))){
 		start_erase = parent->numErases;
 		gc_status = 1;
 		panic_mode = 1;
-		for (i = 0 ; i < NUM_PACKAGES * DIES_PER_PACKAGE * PLANES_PER_DIE ; i++)
+		for (i = 0 ; i < PLANES_PER_DIE ; i++)
 			runGC();
 	}
 }
@@ -221,7 +241,6 @@ bool Ftl::checkGC(void){
 void Ftl::runGC(void) {
 	uint64_t block, page, count, dirty_block=0, dirty_count=0, pAddr, vAddr, tmpAddr;
 	FlashTransaction trans;
-	cout<<"GC Running when there are "<<used_page_count<<" used pages"<<endl;
 
 	// Get the dirtiest block (assumes the flash keeps track of this with an online algorithm).
 	for (block = 0; block < TOTAL_SIZE / BLOCK_SIZE; block++) {
@@ -263,15 +282,14 @@ void Ftl::runGC(void) {
 			addGcTransaction(trans);
 			trans = FlashTransaction(DATA_WRITE, vAddr, NULL);
 			addGcTransaction(trans);
-		} else if (dirty[dirty_block][page] == true){
-			dirty[dirty_block][page] = false;
-		}	
-		if (used[dirty_block][page] == true){
-			used_page_count--;
-			used[dirty_block][page] = false;
-		}
+		}// else if (dirty[dirty_block][page] == true){
+		//	dirty[dirty_block][page] = false;
+		//}	
+		//if (used[dirty_block][page] == true){
+		//	used_page_count--;
+		//	used[dirty_block][page] = false;
+		//}
 	}
-	cout<<"There are "<<used_page_count<<" used pages after gc"<<endl;
 
 	// Schedule the BLOCK_ERASE command.
 	// Note: The address field is just the block address, not an actual byte address.

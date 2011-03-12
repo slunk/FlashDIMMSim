@@ -43,7 +43,6 @@ void Die::receiveFromChannel(ChannelPacket *busPacket){
 				 controlCyclesLeft[busPacket->plane]= WRITE_TIME;
 				 break;
 			 case ERASE:
-				 cout<<"GOT TO AN ERASE\n";
 				 controlCyclesLeft[busPacket->plane]= ERASE_TIME;
 				 break;
 			 default:
@@ -88,6 +87,7 @@ void Die::update(void){
 				 case GC_WRITE:
 					 planes[currentCommand->plane].write(currentCommand);
 					 parentFlashDIMM->numWrites++;
+					 break;
 
 				 case ERASE:
 					 planes[currentCommand->plane].erase(currentCommand);

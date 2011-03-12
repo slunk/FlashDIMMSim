@@ -24,9 +24,9 @@ namespace FDSim{
 			Controller *controller;
 			FlashDIMM *parent;
 		private:
-			uint offset, pageBitWidth, blockBitWidth, planeBitWidth, dieBitWidth, packageBitWidth;
-			uint channel, die, plane, lookupCounter, gc_status, panic_mode;
-			uint64_t used_page_count, start_erase,  queue_size;
+			//uint offset, pageBitWidth, blockBitWidth, planeBitWidth, dieBitWidth, packageBitWidth;
+			uint channel, die, plane, lookupCounter, gc_status, panic_mode, queue_size;
+			uint64_t used_page_count, start_erase;
 			FlashTransaction currentTransaction;
 			uint busy;
 			std::unordered_map<uint64_t,uint64_t> addressMap;

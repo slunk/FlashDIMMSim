@@ -39,6 +39,8 @@ FlashDIMM::FlashDIMM(uint id, string deviceFile, string sysFile, string pwd, str
 	 }
 	
 	 BLOCKS_PER_PLANE = (uint) VIRTUAL_BLOCKS_PER_PLANE * PBLOCKS_PER_VBLOCK;
+	 cout<<"VIRTUAL BLOCKS PER PLANE: "<<VIRTUAL_BLOCKS_PER_PLANE<<endl;
+	 cout<<"PHYSICAL BLOCKS PER PLANE: "<<BLOCKS_PER_PLANE<<endl;
 	PRINT("\nDevice Information:\n");
 	PRINT("Size (GB): "<<TOTAL_SIZE/(1024*1024));
 	PRINT("Packages/Channels: "<<NUM_PACKAGES);

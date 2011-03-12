@@ -60,6 +60,7 @@ void test_obj::run_test(void){
 	clock_t start= clock(), end;
 	uint cycle;
 	//uint write, cycle;
+//	FlashDIMM *flashDimm= new FlashDIMM(1,"ini/toy.ini","ini/def_system.ini","","");
 	FlashDIMM *flashDimm= new FlashDIMM(1,"ini/samsung_K9XXG08UXM.ini","ini/def_system.ini","","");
 	typedef CallbackBase<void,uint,uint64_t,uint64_t> Callback_t;
 	Callback_t *r = new Callback<test_obj, void, uint, uint64_t, uint64_t>(this, &test_obj::read_cb);
